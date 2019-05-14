@@ -15,7 +15,7 @@ def openConnection():
 table = "smartpark_usermanagement.users"
 #END OF MODIFIABLE AREA
 
-#Returns plate number and preference of a user, given their username
+#Returns plate number and preference of a user given their username, -1 if it doesn't exist
 def showUser(username):
     conn = openConnection()
     cursor=conn.cursor()
@@ -24,4 +24,19 @@ def showUser(username):
     result = cursor.fetchall()
     cursor.close()
     conn.close()
+    if len(result)==0:
+        return -1
+    return result
+
+#Returns plate number and preference of a user, given their username, -1 if it doesn't exist
+def showPassword(username):
+    conn = openConnection()
+    cursor=conn.cursor()
+    sql="select password from " + table + " where username=%s"
+    cursor.execute(sql, (username,))
+    result = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    if len(result)==0:
+        return -1
     return result

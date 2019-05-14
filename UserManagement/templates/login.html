@@ -8,11 +8,20 @@
     <h1>Login</h1>
 
     <form action="{{ url_for('user_page') }}" method="post">
-        <p>Insert your username:
+        <p>Username:
             <input type="text" name = "username">
-            <input type="submit" value="Enter">
         </p>
+        <p>Password:
+            <input type="password" name = "password">
+        </p>
+
+        <input type="submit" value="Enter">
     </form>
+
+    {% if flag == 1 %}
+        <br>
+        <p>Error: username or password incorrect</p>
+    {% endif %}
 
 </body>
 </html>

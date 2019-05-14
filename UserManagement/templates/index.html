@@ -6,6 +6,9 @@
 </head>
 <body>
     <h1>SmartPark profile manager</h1>
-    <a href="{{ url_for('login') }}">Login</a>
+    <form action = "{{ url_for('login') }}" method = "POST">
+        <input type="hidden" name="flag" value="0">
+        <input type = "submit" value = "Login" />
+    </form>
 </body>
 </html>
