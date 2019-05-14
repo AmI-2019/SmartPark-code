@@ -25,14 +25,3 @@ def showUser(username):
     cursor.close()
     conn.close()
     return result
-
-"""
-    def newUser(new, urgent):
-    conn = openConnection()
-    sql = "insert into "+table+"(todo, urgent) values (%s, %s)"
-    cursor = conn.cursor()
-    cursor.execute(sql, (new, urgent))
-    conn.commit()
-    cursor.close()
-    conn.close()
-"""
