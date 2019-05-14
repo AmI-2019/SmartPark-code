@@ -3,6 +3,8 @@ import UserManagement.backend
 
 app = Flask(__name__)
 
+#File that contains the routes for the pages of the website
+
 #Redirection
 @app.route('/')
 def beginning():
@@ -31,19 +33,18 @@ def user_page():
     password = request.form["password"]
 
     # Check if user exists
-    result=UserManagement.backend.showPassword(username)
-    if(result == -1):
+    true_password=UserManagement.backend.showPassword(username)
+    if(true_password == -1):
         return render_template("login.html", flag=1)
 
     #check if password is correct
-    true_password=result[0][0]
     if(true_password!=password):
         return render_template("login.html", flag=1)
 
     #result is a tuple of tuples
-    result=UserManagement.backend.showUser(username)
-    plate=result[0][0]
-    preference=result[0][1]
+    result=UserManagement.backend.showUserFromUsername(username)
+    plate=result[0]
+    preference=result[1]
     return render_template("user_page.html", username=username, plate=plate, preference=preference)
 
 if __name__ == '__main__':
