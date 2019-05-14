@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, url_for, request, session
+import UserManagement.backend
 
 app = Flask(__name__)
 
@@ -18,6 +19,17 @@ def index():
 def login():
     return render_template("login.html")
 
+#Personal page: given the username, it shows the relative page
+@app.route('/user_page', methods=["POST"])
+def user_page():
+    username = request.form["username"]
+
+    #result is a tuple of tuples
+    result=UserManagement.backend.showUser(username)
+    plate=result[0][0]
+    preference=result[0][1]
+
+    return render_template("user_page.html", username=username, plate=plate, preference=preference)
 
 if __name__ == '__main__':
     app.run()

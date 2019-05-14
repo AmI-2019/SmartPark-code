@@ -6,5 +6,13 @@
 </head>
 <body>
     <h1>Login</h1>
+
+    <form action="{{ url_for('user_page') }}" method="post">
+        <p>Insert your username:
+            <input type="text" name = "username">
+            <input type="submit" value="Enter">
+        </p>
+    </form>
+
 </body>
 </html>
