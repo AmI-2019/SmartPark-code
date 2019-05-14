@@ -7,7 +7,6 @@
 #
 #File that contains the functions that interact with the database
 
-
 import pymysql
 
 #Information about the specific system hosting the server
