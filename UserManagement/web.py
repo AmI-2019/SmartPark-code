@@ -22,29 +22,81 @@ def index():
 def login():
     # flag:
     # 0 -> normal login
-    # 1 -> error message: previous login attempt failed
+    # 1 -> error message: invalid username
+    # 2 -> error message: invalid password
     flag=request.form["flag"]
     return render_template("login.html", flag = flag)
+
+#Route that handles the login:
+#Returns the status of the login
+@app.route('/login_control', methods=["POST"])
+def login_control():
+    # flag:
+    # 0 -> normal login
+    # 1 -> error message: invalid username
+    # 2 -> error message: invalid password
+    username = request.form["username"]
+    password = request.form["password"]
+
+    # Check if user exists
+    true_password = UserManagement.backend.showPassword(username)
+    if (true_password == -1):
+        return render_template("login.html", flag=1)
+
+    # check if password is correct
+    if (true_password != password):
+        return render_template("login.html", flag=2)
+
+    # result is a tuple of tuples
+    result = UserManagement.backend.showUserFromUsername(username)
+    plate=result[0]
+    preference=result[1]
+
+    return render_template("user_page.html", username=username, plate=plate, preference=preference)
+
+
+#Page that allows the creation of a new profile:
+#Asks for a flag that indicates if there was a previous failed login attempt
+@app.route('/new_user', methods=["POST"])
+def new_user():
+    # flag:
+    # 0 -> normal creation
+    # 1 -> error message: invalid plate
+    # 2 -> error message: plate already taken
+    # 3 -> error message: username already taken
+    flag=request.form["flag"]
+    return render_template("new_user.html", flag = flag)
+
+#Route that handles the creation of a new profile:
+#Returns the status of the insertion to the site
+@app.route('/new_user_creation', methods=["POST"])
+def new_user_creation():
+    # flag:
+    # 0 -> normal creation
+    # 1 -> error message: invalid plate
+    # 2 -> error message: plate already taken
+    # 3 -> error message: username already taken
+    username = request.form["username"]
+    password = request.form["password"]
+    plate = request.form["plate"]
+    preference = request.form["preference"]
+
+    flag = UserManagement.backend.newUser(username, password, plate, int(preference))
+
+    if(flag == 0):
+        #Successful creation
+        return render_template("user_page.html", username=username, plate=plate, preference=preference)
+
+    #Failed creation
+    return render_template("new_user.html", flag=flag)
 
 #Personal page: given the username, it shows the relative page
 @app.route('/user_page', methods=["POST"])
 def user_page():
     username = request.form["username"]
-    password = request.form["password"]
+    plate = request.form["plate"]
+    preference = request.form["preference"]
 
-    # Check if user exists
-    true_password=UserManagement.backend.showPassword(username)
-    if(true_password == -1):
-        return render_template("login.html", flag=1)
-
-    #check if password is correct
-    if(true_password!=password):
-        return render_template("login.html", flag=1)
-
-    #result is a tuple of tuples
-    result=UserManagement.backend.showUserFromUsername(username)
-    plate=result[0]
-    preference=result[1]
     return render_template("user_page.html", username=username, plate=plate, preference=preference)
 
 if __name__ == '__main__':

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New user</title>
+</head>
+<body>
+    <h1>New user</h1>
+
+    <form action="{{ url_for('new_user_creation') }}" method="post">
+        <p>Username:
+            <input type="text" name = "username">
+        </p>
+
+        <p>Password:
+            <input type="password" name = "password">
+        </p>
+
+        <p>Plate number:
+            <input type="text" name = "plate">
+        </p>
+
+        <p>Preference:
+            <input type="text" name = "preference">
+        </p>
+
+        <input type="submit" value="Enter">
+    </form>
+
+    <!-- flag:
+    # 0 -> normal creation
+    # 1 -> error message: invalid plate
+    # 2 -> error message: plate already taken
+    # 3 -> error message: username already taken
+    # 4 -> general error message
+    -->
+    {% if flag == 1 %}
+        <br>
+        <p>Error: Invalid plate number</p>
+    {% endif %}
+    {% if flag == 2 %}
+        <br>
+        <p>Error: Plate number already taken</p>
+    {% endif %}
+    {% if flag == 3 %}
+        <br>
+        <p>Error: Username already taken</p>
+    {% endif %}
+
+
+    <form action = "{{ url_for('index') }}">
+        <input type = "submit" value = "Return to the home page" />
+    </form>
+
+</body>
+</html>

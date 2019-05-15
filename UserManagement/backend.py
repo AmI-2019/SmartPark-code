@@ -1,13 +1,14 @@
-#   Structure of the table "users"
+#   Structure of the table "table"
 #
-#   username: varchar(255) PRIMARY KEY
+#   username: varchar(255)
 #   password: varchar(255)
-#   plate: varchar(7) [A-Z]{2}[0-9]{3}[A-Z]{2}
+#   plate: varchar(7)  PRIMARY KEY [A-Z]{2}[0-9]{3}[A-Z]{2}
 #   preference: integer
 #
 #File that contains the functions that interact with the database
 
 import pymysql
+import re
 
 #Information about the specific system hosting the server
 #BEGIN OF MODIFIABLE AREA
@@ -28,7 +29,8 @@ def showUserFromUsername(username):
     conn.close()
     if len(result)==0:
         return -1
-    return result
+    #result is a tuple of tuples
+    return result[0]
 
 #Returns plate number and preference of a user, given their username, -1 if it doesn't exist
 def showPassword(username):
@@ -57,3 +59,36 @@ def showUserFromPlate(plate):
         return -1
     # resut is a tuple of tuples
     return result[0]
+
+# Insertion of a new user
+# Return values:
+#  0 -> Successful insertion
+#  1 -> Plate is not valid
+#  2 -> Plate already taken
+#  3 -> Username already taken
+# Preference is an integer
+def newUser(username, password, plate, preference):
+
+    #Error if "plate" is not a valid plate number
+    isPlate=re.search("[A-Z]{2}[0-9]{3}[A-Z]{2}", plate)
+    if(isPlate == None):
+        return 1
+
+    #Error if the palte is already taken
+    if(showUserFromPlate(plate)!=-1):
+        return 2
+
+    # Error if the username is already taken
+    if (showUserFromUsername(username) != -1):
+        return 3
+
+    conn = openConnection()
+    cursor=conn.cursor()
+    sql="insert into " + table + "(username, password, plate, preference) values(%s, %s, %s, %s)"
+    cursor.execute(sql, (username, password, plate, preference))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    #Successful insertion
+    return 0

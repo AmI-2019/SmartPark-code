@@ -7,7 +7,7 @@
 <body>
     <h1>Login</h1>
 
-    <form action="{{ url_for('user_page') }}" method="post">
+    <form action="{{ url_for('login_control') }}" method="POST">
         <p>Username:
             <input type="text" name = "username">
         </p>
@@ -20,8 +20,17 @@
 
     {% if flag == 1 %}
         <br>
-        <p>Error: username or password incorrect</p>
+        <p>Error: Invalid username</p>
     {% endif %}
+    {% if flag == 2 %}
+        <br>
+        <p>Error: Invalid password</p>
+    {% endif %}
+
+
+    <form action = "{{ url_for('index') }}">
+        <input type = "submit" value = "Return to the home page" />
+    </form>
 
 </body>
 </html>
