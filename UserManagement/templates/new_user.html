@@ -20,8 +20,10 @@
             <input type="text" name = "plate">
         </p>
 
-        <p>Preference:
-            <input type="text" name = "preference">
+        <p>Preference:<br>
+            <input type="radio" name = "preference" value="1">1<br>
+            <input type="radio" name = "preference" value="2">2<br>
+            <input type="radio" name = "preference" value="3">3<br>
         </p>
 
         <input type="submit" value="Enter">
@@ -32,7 +34,6 @@
     # 1 -> error message: invalid plate
     # 2 -> error message: plate already taken
     # 3 -> error message: username already taken
-    # 4 -> general error message
     -->
     {% if flag == 1 %}
         <br>
@@ -46,7 +47,6 @@
         <br>
         <p>Error: Username already taken</p>
     {% endif %}
-
 
     <form action = "{{ url_for('index') }}">
         <input type = "submit" value = "Return to the home page" />
