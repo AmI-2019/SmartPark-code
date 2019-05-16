@@ -1,27 +1,40 @@
+"""
+Keeps track of the current situation inside
+"""
+
 class Spot:
-    def __init__(self, id, properties, occupied=False):
-        self.id = id
+    def __init__(self, ID, properties, occupied=False):
+        self.ID = ID
         self.properties = properties
         self.occupied = occupied
-
-
-    def setOccupied(self):
-        self.occupied = True
-
-
-    def setFree(self):
-        self.occupied = False
 
 
 class Storey:
     def __init__(self, nSpots):
         self.nSpots = nSpots
+        self.free = nSpots
+        self.circulating = 0
         self.spots = []
         for i in range(nSpots):
             self.spots.append(Spot(i, []))
 
-def setSpot(id, occupied):
-    storey.spots[id].occupied = occupied
+
+def handleOccupation(ID: int, occupied: bool):
+    storey.spots[ID].occupied = occupied
+    if occupied:
+        storey.free -= 1
+        storey.circulating -= 1
+    else:
+        storey.free += 1
+        storey.circulating += 1
+
+
+def handleStoreyArrival(plate: str):
+    storey.circulating += 1
+
+
+def handleStoreyExit():
+    storey.circulating -= 1
 
 
 nSpots = 15
