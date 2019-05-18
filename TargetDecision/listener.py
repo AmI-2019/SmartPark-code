@@ -1,5 +1,5 @@
 """
-Listens to incoming MQTT messages.
+Listens for incoming MQTT messages.
 
 
 Connects to the remote broker, and masks connection breakdowns:
@@ -14,7 +14,15 @@ Dispatches messages to appropriate functions from other modules:
 
 import paho.mqtt.client as mqtt
 import spots
+import arrival
 
+
+brokerHost = "192.168.80.128"
+clientID = "TargetDecision"
+occupationTopic = "storey/spot/+"
+entranceArrivalTopic = "entrance/plate"
+storeyArrivalTopic = "storey/plate"
+storeyExitTopic = "storey/exit"
 
 """
 The callback for when the client receives a CONNACK response from the server.
@@ -43,7 +51,7 @@ This event is handled by the 'spots' module.
 """
 def handleOccupation(client, userdata, msg):
     topics = msg.topic.split("/")
-    spotID = topics[1]
+    spotID = topics[2]
     # The payload needs to be decoded from binary to str, then converted to int
     occupiedAsInt = int(msg.payload.decode())
 
@@ -61,7 +69,11 @@ The message is structured as follows:
 This event is handled by the 'arrival' module.
 """
 def handleEntranceArrival(client, userdata, msg):
-    pass
+    topics = msg.topic.split("/")
+    plate = topics[1]
+
+    # The second argument must be a bool
+    arrival.handleEntranceArrival(plate)
 
 
 """
@@ -99,15 +111,12 @@ def on_message(client, userdata, msg):
     pass
 
 
-brokerHost = "192.168.80.128"
-clientID = "TargetDecision"
-occupationTopic = "storey/spot/+"
-entranceArrivalTopic = "entrance/plate"
-storeyArrivalTopic = "storey/plate"
-storeyExitTopic = "storey/exit"
+"""
+The main function of this module, to be executed in a separate thread
 
-if __name__ == '__main__':
-
+Sets callbacks for specific topics, connects to the broker, then waits for incoming messages
+"""
+def main():
     client = mqtt.Client(client_id=clientID)
 
     client.on_connect = on_connect
