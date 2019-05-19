@@ -5,9 +5,10 @@ Exposes an API consisting of a single URI for target-spot querying
 """
 
 from flask import Flask
-import arrival
 
 app = Flask(__name__)
+# The port for the REST interface exposed by the TDS to the ACS
+TD_ACport = 5001
 
 
 """
@@ -17,13 +18,8 @@ Returns the target spot assigned to the supplied plate number
 """
 @app.route("/target/<str:plate>")
 def target(plate: str):
-    # No need to wait on a lock: when a car approaches the storey entrance,
-    # a record is already present in the module 'arrival'
-    return str(arrival.targetSpots[plate])
-
-
-# The port for the REST interface exposed by the TDS (Target-Decision Server) to the ACS (Area-Control Server)
-TD_ACport = 5001
+    # The best location for plate -> targetSpot association is yet to be found
+    pass
 
 
 """

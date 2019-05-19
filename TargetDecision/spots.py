@@ -4,7 +4,7 @@ Keeps track of the current situation inside
 
 Defines a 'Spot' and a 'Storey' class that, together, give a complete overview of the current load status
 
-Provides appropriate behaviour to event handlers in the module 'listener':
+Indirectly handles some events ('Occupation', 'StoreyArrival', and 'StoreyExit') from the sensors inside:
     - handleOccupation() updates both 'free' and 'circulating'
     - handleStoreyArrival() and handleStoreyExit() only update 'circulating'
 
@@ -44,6 +44,8 @@ storey: Storey
 
 
 """
+Called by 'listener.handleOccupation()'
+
 Updates 'occupied', 'free', and 'circulating'
 """
 def handleOccupation(ID: int, occupied: bool):
@@ -59,6 +61,8 @@ def handleOccupation(ID: int, occupied: bool):
 
 
 """
+Called by 'listener.handleStoreyArrival()'
+
 Updates 'circulating'
 """
 def handleStoreyArrival(plate: str):
@@ -66,6 +70,8 @@ def handleStoreyArrival(plate: str):
 
 
 """
+Called by 'listener.handleStoreyExit()'
+
 Updates 'circulating'
 """
 def handleStoreyExit():
