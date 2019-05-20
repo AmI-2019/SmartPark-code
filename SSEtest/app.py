@@ -1,4 +1,4 @@
-from flask import Flask, Response, redirect, url_for, render_template
+from flask import Flask, Response, redirect, url_for, render_template, request
 
 app = Flask(__name__)
 
@@ -49,5 +49,15 @@ def stream():
     return Response(eventStream(), mimetype="text/event-stream")
 
 
+"""
+Seems like no separate script is needed
+"""
+@app.route('/accept', methods=["POST"])
+def accept():
+    print(type(request))
+    print(request.data)
+    return ""
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(port=8000)

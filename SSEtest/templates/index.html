@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
-    <a href="{{ url_for('index') }}">Reload page</a>
     <div id="myDiv">User inputs go here: <br></div>
+    <br><br>
+    <button type="button" id="sendButton">Send a number to the server!</button>
 
     <script src = "{{ url_for('static', filename='testscript.js') }}"></script>
 
