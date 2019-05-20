@@ -44,7 +44,7 @@ Flask understands that it needs to call it (the function) until it is done
 """
 @app.route("/stream")
 def stream():
-    print("Sending new update")
+    print("Received a GET request")
     # The Response() constructor is needed to set 'mimetype', as well as to pass it a generator function
     return Response(eventStream(), mimetype="text/event-stream")
 
