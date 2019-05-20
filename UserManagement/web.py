@@ -61,9 +61,10 @@ def login_control():
 def new_user():
     # flag:
     # 0 -> normal creation
-    # 1 -> error message: invalid plate
-    # 2 -> error message: plate already taken
-    # 3 -> error message: username already taken
+    # 1 -> error message: plate already taken
+    # 2 -> error message: username already taken
+    # 3 -> error message: plate field empty
+    # 4 -> username field empty
     flag=request.form["flag"]
     return render_template("new_user.html", flag = flag)
 
@@ -73,9 +74,10 @@ def new_user():
 def new_user_creation():
     # flag:
     # 0 -> normal creation
-    # 1 -> error message: invalid plate
-    # 2 -> error message: plate already taken
-    # 3 -> error message: username already taken
+    # 1 -> error message: plate already taken
+    # 2 -> error message: username already taken
+    # 3 -> error message: plate field empty
+    # 4 -> username field empty
     username = request.form["username"]
     password = request.form["password"]
     plate = request.form["plate"]

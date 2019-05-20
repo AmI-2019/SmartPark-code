@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>User page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="structure">
     <h1>Welcome, {{ username }}</h1>
-    <p>Plate number: {{ plate }}</p>
+
+    <p>Plate number:</p>
+
+    <div id="plate">
+        <p id="number">{{ plate }}</p>
+        <img src="{{ url_for('static', filename='plate.jpg') }}">
+    </div>
+
     <p>Preference: {{ preference }}</p>
     <br>
 
