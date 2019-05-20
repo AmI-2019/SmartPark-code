@@ -52,7 +52,8 @@ def login_control():
     plate=result[0]
     preference=result[1]
 
-    return render_template("user_page.html", username=username, plate=plate, preference=preference)
+    plate_with_spaces=plate[0:2]+" "+plate[2:5]+" "+plate[5:7]
+    return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)
 
 
 #Page that allows the creation of a new profile:
@@ -87,7 +88,8 @@ def new_user_creation():
 
     if(flag == 0):
         #Successful creation
-        return render_template("user_page.html", username=username, plate=plate, preference=preference)
+        plate_with_spaces = plate[0:2] + " " + plate[2:5] + " " + plate[5:7]
+        return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)
 
     #Failed creation
     return render_template("new_user.html", flag=flag)
@@ -98,8 +100,9 @@ def user_page():
     username = request.form["username"]
     plate = request.form["plate"]
     preference = request.form["preference"]
+    plate_with_spaces=plate[0:2]+" "+plate[2:5]+" "+plate[5:7]
 
-    return render_template("user_page.html", username=username, plate=plate, preference=preference)
+    return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)
 
 if __name__ == '__main__':
     app.run()

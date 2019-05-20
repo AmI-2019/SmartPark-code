@@ -56,9 +56,8 @@ h1{
 
 /*
 @font-face {
-
-  font-family: plateNumber;
-  src: url("{{ url_for('static', filename='plates1999.ttf') }}");
+  font-family: custom_font;
+  src: "static\plates1999.ttf";
 }
 */
 
