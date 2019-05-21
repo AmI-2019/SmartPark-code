@@ -5,6 +5,7 @@ Exposes an API consisting of a single URI for target-spot querying
 """
 
 from flask import Flask
+import arrival
 
 app = Flask(__name__)
 # The port for the REST interface exposed by the TDS to the ACS
@@ -18,14 +19,14 @@ Returns the target spot assigned to the supplied plate number
 """
 @app.route("/target/<str:plate>")
 def target(plate: str):
-    # The best location for plate -> targetSpot association is yet to be found
-    pass
+    targetSpot = arrival.targetSpot[plate]
+    del arrival.targetSpot[plate]
+
+    return str(targetSpot)
 
 
 """
-The main function of this module, to be executed in a separate thread
-
-Listens for requests on the appropriate port
+Blocks and listens for HTTP requests, needs to be executed in a separate thread
 """
 def main():
     # host being '0.0.0.0' allows for public visibility

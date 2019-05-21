@@ -5,14 +5,19 @@ Indirectly handles the event 'EntranceArrival'
     - Retrieves user preferences via the API exposed by the UMS (User-Management Server)
     - Retrieves info on the situation inside via the 'spots' module
     - Combines them into a 'UserPrompt' object, ready to be displayed on the touch-screen
+    - Maintains a plate -> targetSpot mapping, to answer queries from ACS
 """
 
 import requests
 import spots
 
 
-# The next prompt to be displayed on the touch-screen
+# The next prompt to be displayed on the touch-screen, updated by handleEntranceArrival()
 nextPrompt = None
+# The last plate number arrived, updated by handleEntranceArrival()
+lastPlate: str = ""
+# The plate -> targetSpot mapping, written by addChoice() and destructively read by area.target()
+targetSpot: dict[str, int] = {}
 # The port for the REST interface exposed by the UMS to the TDS
 UM_TDport = 5000
 UM_TD_APIprefix = "/api/v1/"
@@ -71,13 +76,13 @@ Called by 'listener.handleEntranceArrival()'
 Makes the 'nextPrompt' ready to be displayed
 """
 def handleEntranceArrival(plate: str):
-    global nextPrompt
+    global nextPrompt, lastPlate
+
     user = getUserFromPlate(plate)
+    lastPlate = plate
     nextPrompt = getPromptFromUser(user)
 
 
-"""
-Still doesn't do anything; will probably need to initialise some Locks in the final version
-"""
-def main():
-    pass
+def addChoice(spotID: int):
+    targetSpot[lastPlate] = spotID
+
