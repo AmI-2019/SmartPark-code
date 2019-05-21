@@ -7,8 +7,8 @@ The Website exposed to the TS (Touch-Screen) to collect the user's choice
 - An accept route, that passes user's choice to the 'arrival' module, then redirects to the idle page
 """
 
-from flask import Flask
-import arrival
+from flask import Flask, redirect, url_for, render_template, request
+#import arrival
 
 app = Flask(__name__)
 # The port for the Website exposed to the TS
@@ -20,8 +20,8 @@ The base route, loaded at boot.
 Should just redirect to the idle page.
 """
 @app.route("/")
-def idle():
-    pass
+def start():
+    return redirect(url_for("idle"))
 
 
 """
@@ -30,7 +30,7 @@ Should include a link to the choice page.
 """
 @app.route("/idle")
 def idle():
-    pass
+    return render_template("idle.html")
 
 
 """
@@ -40,8 +40,23 @@ Should return (to the Touch-Screen) a JSON version of arrival.nextPrompt.
 Should include a form for POSTing data to the accept route
 """
 @app.route("/choice")
-def idle():
-    pass
+def choice():
+
+    #Call to the function arrival.nextPrompt in the final version
+    #A predefined list of elements for debugging purposes
+
+    #Passing to the html page:
+    # spots -> list of suggested spots
+    # len -> number of suggested spots (length of the list)
+    # free  -> number of free spots on the storey
+    # circulating -> number of cars circulating on the storey
+    spots=["A1", "A2", "B1"]
+    len=3
+    free=7
+    circulating=2
+
+    return render_template("choice.html", spots=spots, len=len, free=free, circulating=circulating)
+
 
 
 """
@@ -51,8 +66,15 @@ Should only pass the payload (user's choice), as an int, to arrival.addChoice(),
 then redirect to the idle page
 """
 @app.route("/accept", methods=["POST"])
-def idle():
-    pass
+def accept():
+
+    #Call to the function arrival.addChoice in the final version
+    #A print of the chosen element fot debugging purposes
+    spot_chosen=request.form["spots"]
+
+    print(spot_chosen)
+
+    return redirect(url_for("idle"))
 
 
 """
@@ -60,3 +82,7 @@ Blocks and listens for HTTP requests, needs to be executed in a separate thread
 """
 def main():
     app.run(host="0.0.0.0", port=TD_TSport)
+
+# For debugging purposes, it runs the page
+if __name__ == '__main__':
+    app.run()

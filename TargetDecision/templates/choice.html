@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Choice</title>
+</head>
+<body>
+    <h1>Information:</h1>
+    <p>Number of free spots in this storey: {{ free }}</p>
+    <p>Number of cars circulating in this storey: {{ circulating }}</p>
+    <br>
+    <p>Choose one of the selected spots:</p>
+
+    <form action="{{ url_for('accept') }}" method="post">
+    {% for i in range(0, len) %}
+        <input type="radio" name="spots" value="{{ spots[i] }}">{{ spots[i] }}<br>
+    {% endfor %}
+    <input type="submit" value="Submit">
+    </form>
+
+</body>
+</html>
