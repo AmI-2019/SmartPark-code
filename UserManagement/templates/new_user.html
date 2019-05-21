@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>New user</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="structure">
     <h1>New user</h1>
 
     <form action="{{ url_for('new_user_creation') }}" method="post">
         <p>Username:
-            <input type="text" name = "username">
+            <input type="text" name = "username" autocomplete="off">
         </p>
 
         <p>Password:
@@ -17,11 +18,11 @@
         </p>
 
         <p>Plate number:
-            <input type="text" name = "plate">
+            <input type="text" name = "plate" autocomplete="off">
         </p>
 
         <p>Preference:<br>
-            <input type="radio" name = "preference" value="1">1<br>
+            <input type="radio" name = "preference" value="1" checked>1<br>
             <input type="radio" name = "preference" value="2">2<br>
             <input type="radio" name = "preference" value="3">3<br>
         </p>
@@ -31,21 +32,31 @@
 
     <!-- flag:
     # 0 -> normal creation
-    # 1 -> error message: invalid plate
-    # 2 -> error message: plate already taken
-    # 3 -> error message: username already taken
+    # 1 -> error message: plate already taken
+    # 2 -> error message: username already taken
+    # 3 -> error message: plate field empty
+    # 4 -> error message: username field empty
+    # 5 -> error message: password field empty
     -->
     {% if flag == 1 %}
         <br>
-        <p>Error: Invalid plate number</p>
+        <p>Error: Plate number already taken</p>
     {% endif %}
     {% if flag == 2 %}
         <br>
-        <p>Error: Plate number already taken</p>
+        <p>Error: Username already taken</p>
     {% endif %}
     {% if flag == 3 %}
         <br>
-        <p>Error: Username already taken</p>
+        <p>Error: Plate field empty</p>
+    {% endif %}
+    {% if flag == 4 %}
+        <br>
+        <p>Error: Username field empty</p>
+    {% endif %}
+    {% if flag == 5 %}
+        <br>
+        <p>Error: Password field empty</p>
     {% endif %}
 
     <form action = "{{ url_for('index') }}">

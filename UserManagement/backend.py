@@ -2,7 +2,7 @@
 #
 #   username: varchar(255)
 #   password: varchar(255)
-#   plate: varchar(7)  PRIMARY KEY [A-Z]{2}[0-9]{3}[A-Z]{2}
+#   plate: varchar(7)  PRIMARY KEY
 #   preference: integer
 #
 #File that contains the functions that interact with the database
@@ -63,24 +63,32 @@ def showUserFromPlate(plate):
 # Insertion of a new user
 # Return values:
 #  0 -> Successful insertion
-#  1 -> Plate is not valid
-#  2 -> Plate already taken
-#  3 -> Username already taken
+#  1 -> Plate already taken
+#  2 -> Username already taken
+#  3 -> Plate field empty
+#  4 -> Username field empty
+#  5 -> Password field empty
 # Preference is an integer
 def newUser(username, password, plate, preference):
+    #Error if the plate field is empty
+    if(plate==""):
+        return 3
 
-    #Error if "plate" is not a valid plate number
-    isPlate=re.search("[A-Z]{2}[0-9]{3}[A-Z]{2}", plate)
-    if(isPlate == None):
-        return 1
+    #Error if the username field is empty
+    if (username == ""):
+        return 4
+
+    #Error if the password field is empty
+    if (password == ""):
+        return 5
 
     #Error if the palte is already taken
     if(showUserFromPlate(plate)!=-1):
-        return 2
+        return 1
 
     # Error if the username is already taken
     if (showUserFromUsername(username) != -1):
-        return 3
+        return 2
 
     conn = openConnection()
     cursor=conn.cursor()
