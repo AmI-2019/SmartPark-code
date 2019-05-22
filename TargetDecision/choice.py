@@ -53,18 +53,25 @@ def choice():
     # len -> number of suggested spots (length of the list)
     # free  -> number of free spots on the storey
     # circulating -> number of cars circulating on the storey
+    # audio_name -> name of the audio file used in the page
+
+    #DEBUG
+    #user = input("Nuovo utente: ")
+    #/DEBUG
 
     user="Andrea"
-    spots=["A1", "A2", "B1"]
-    len=3
-    free=7
-    circulating=2
+    spots = ["A1", "A2", "B1"]
+    len = 3
+    free = 7
+    circulating = 2
+    audio_name = "audio_file_" + user + ".mp3"
 
-    text="Welcome " + user + ", please choose your spot"
+    text = "Welcome " + user + ", please choose your spot"
     tts = gTTS(text=text, lang="en-us")
-    tts.save("static/audio_file.mp3")
 
-    return render_template("choice.html", user=user, spots=spots, len=len, free=free, circulating=circulating)
+    tts.save("static/" + audio_name)
+
+    return render_template("choice.html", user=user, spots=spots, len=len, free=free, circulating=circulating, audio_name=audio_name)
 
 
 

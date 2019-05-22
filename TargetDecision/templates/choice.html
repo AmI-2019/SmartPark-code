@@ -8,7 +8,6 @@
     <h1 id="welcome">Welcome, {{ user }}</h1>
     <p>Number of free spots in this storey: {{ free }}</p>
     <p>Number of cars circulating in this storey: {{ circulating }}</p>
-    <br>
     <p>Choose one of the selected spots:</p>
 
     <form action="{{ url_for('accept') }}" method="post">
@@ -18,7 +17,7 @@
     <input type="submit" value="Submit">
     </form>
 
-    <audio src="{{ url_for('static', filename='audio_file.mp3')}}" hidden autoplay></audio>
+    <audio src="{{ url_for('static', filename=audio_name)}}" hidden autoplay></audio>
 
 </body>
 </html>
