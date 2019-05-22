@@ -46,16 +46,18 @@ def choice():
     #A predefined list of elements for debugging purposes
 
     #Passing to the html page:
+    # user -> the username of the approaching user
     # spots -> list of suggested spots
     # len -> number of suggested spots (length of the list)
     # free  -> number of free spots on the storey
     # circulating -> number of cars circulating on the storey
+    user="Andrea"
     spots=["A1", "A2", "B1"]
     len=3
     free=7
     circulating=2
 
-    return render_template("choice.html", spots=spots, len=len, free=free, circulating=circulating)
+    return render_template("choice.html", user=user, spots=spots, len=len, free=free, circulating=circulating)
 
 
 
