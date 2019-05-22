@@ -8,6 +8,7 @@ The Website exposed to the TS (Touch-Screen) to collect the user's choice
 """
 
 from flask import Flask, redirect, url_for, render_template, request
+from gtts import gTTS
 #import arrival
 
 app = Flask(__name__)
@@ -44,6 +45,7 @@ def choice():
 
     #Call to the function arrival.nextPrompt in the final version
     #A predefined list of elements for debugging purposes
+    #the audio file "audio_file.mp3" is overwritten every time a new one is generated
 
     #Passing to the html page:
     # user -> the username of the approaching user
@@ -51,11 +53,16 @@ def choice():
     # len -> number of suggested spots (length of the list)
     # free  -> number of free spots on the storey
     # circulating -> number of cars circulating on the storey
+
     user="Andrea"
     spots=["A1", "A2", "B1"]
     len=3
     free=7
     circulating=2
+
+    text="Welcome " + user + ", please choose your spot"
+    tts = gTTS(text=text, lang="en-us")
+    tts.save("static/audio_file.mp3")
 
     return render_template("choice.html", user=user, spots=spots, len=len, free=free, circulating=circulating)
 
