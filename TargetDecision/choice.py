@@ -92,13 +92,6 @@ def accept():
 
     return redirect(url_for("idle"))
 
-
-"""
-Blocks and listens for HTTP requests, needs to be executed in a separate thread
-"""
-def main():
-    app.run(host="0.0.0.0", port=TD_TSport)
-
 # For debugging purposes, it runs the page
 if __name__ == '__main__':
     # host being '0.0.0.0' allows for public visibility
