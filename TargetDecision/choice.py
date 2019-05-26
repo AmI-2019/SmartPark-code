@@ -67,7 +67,7 @@ def choice():
     # 1 -> taken
     # 2 -> suggested
     state = [2, 0, 0, 1]
-    free = state.count('0')
+    free = num-state.count(1)
     circulating = 1
     audio_name = "audio_file_" + user + ".mp3"
 
