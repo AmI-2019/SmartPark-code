@@ -11,10 +11,9 @@
     <p>Choose one of the selected spots:</p>
 
     <form action="{{ url_for('accept') }}" method="post">
-    {% for i in range(0, len) %}
-        <input type="radio" name="spots" value="{{ spots[i] }}">{{ spots[i] }}<br>
-    {% endfor %}
-    <input type="submit" value="Submit">
+        {% for i in range(0, num) %}
+            <button type="submit" class="{{ state[i] }}" id="{{ i }}" name="spot" value="{{ i }}">{{ i }}</button>
+        {% endfor %}
     </form>
 
     <audio src="{{ url_for('static', filename=audio_name)}}" hidden autoplay></audio>

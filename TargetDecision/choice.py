@@ -49,9 +49,9 @@ def choice():
 
     #Passing to the html page:
     # user -> the username of the approaching user
-    # spots -> list of suggested spots
-    # len -> number of suggested spots (length of the list)
-    # free  -> number of free spots on the storey
+    # num -> total number of spots
+    # state -> occupation state for each spot
+    # free -> number of free spots
     # circulating -> number of cars circulating on the storey
     # audio_name -> name of the audio file used in the page
 
@@ -60,10 +60,14 @@ def choice():
     #/DEBUG
 
     user="Andrea"
-    spots = ["A1", "A2", "B1"]
-    len = 3
-    free = 7
-    circulating = 2
+    num = 4
+    # "state" flag:
+    # 0 -> free
+    # 1 -> taken
+    # 2 -> suggested
+    state = [2, 0, 0, 1]
+    free = state.count('0')
+    circulating = 1
     audio_name = "audio_file_" + user + ".mp3"
 
     text = "Welcome " + user + ", please choose your spot"
@@ -71,9 +75,7 @@ def choice():
 
     tts.save("static/" + audio_name)
 
-    return render_template("choice.html", user=user, spots=spots, len=len, free=free, circulating=circulating, audio_name=audio_name)
-
-
+    return render_template("choice.html", user=user, num=num, state=state, free=free, circulating=circulating, audio_name=audio_name)
 
 """
 The accept route.
@@ -86,13 +88,16 @@ def accept():
 
     #Call to the function arrival.addChoice in the final version
     #A print of the chosen element fot debugging purposes
-    spot_chosen=request.form["spots"]
+    spot_chosen=request.form["spot"]
 
     print(spot_chosen)
 
     return redirect(url_for("idle"))
 
-# For debugging purposes, it runs the page
+
 if __name__ == '__main__':
     # host being '0.0.0.0' allows for public visibility
-    app.run(host="0.0.0.0", port=5001)
+    # app.run(host="0.0.0.0", port=5001)
+
+    # using localhost to debug
+    app.run()
