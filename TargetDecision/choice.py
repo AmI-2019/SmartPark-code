@@ -9,6 +9,7 @@ The Website exposed to the TS (Touch-Screen) to collect the user's choice
 
 from flask import Flask, redirect, url_for, render_template, request
 from gtts import gTTS
+import os
 #import arrival
 
 app = Flask(__name__)
@@ -70,10 +71,10 @@ def choice():
     circulating = 1
     audio_name = "audio_file_" + user + ".mp3"
 
-    text = "Welcome " + user + ", please choose your spot"
-    tts = gTTS(text=text, lang="en-us")
-
-    tts.save("static/" + audio_name)
+    if not os.path.isfile("static/" + audio_name):
+        text = "Welcome " + user + ", please choose your spot"
+        tts = gTTS(text=text, lang="en-us")
+        tts.save("static/" + audio_name)
 
     return render_template("choice.html", user=user, num=num, state=state, free=free, circulating=circulating, audio_name=audio_name)
 
@@ -97,7 +98,7 @@ def accept():
 
 if __name__ == '__main__':
     # host being '0.0.0.0' allows for public visibility
-    app.run(host="0.0.0.0", port=5001)
+    #app.run(host="0.0.0.0", port=5001)
 
     # using localhost to debug
-    #app.run()
+    app.run()
