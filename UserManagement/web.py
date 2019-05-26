@@ -52,7 +52,7 @@ def login_control():
     plate=result[0]
     preference=result[1]
 
-    plate_with_spaces=plate[0:2]+" "+plate[2:5]+" "+plate[5:7]
+    plate_with_spaces=plate[0:2]+" "+plate[2:7]
     return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)
 
 

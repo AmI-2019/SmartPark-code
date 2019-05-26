@@ -54,16 +54,17 @@ h1{
   color: black;
 }
 
-/*
 @font-face {
-  font-family: custom_font;
-  src: "static\plates1999.ttf";
+  font-family: plate_font;
+  src: url("plates1999.ttf");
 }
-*/
 
 #number{
   position: absolute;
-  font-size: 60px;
+  font-size: 85px;
+  font-family: 'plate_font';
+  word-spacing: -20px;
+  margin: 0px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
