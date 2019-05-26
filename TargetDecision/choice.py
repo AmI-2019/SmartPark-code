@@ -97,7 +97,7 @@ def accept():
 
 if __name__ == '__main__':
     # host being '0.0.0.0' allows for public visibility
-    # app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5001)
 
     # using localhost to debug
-    app.run()
+    #app.run()

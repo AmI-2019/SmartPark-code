@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Choice</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='buttons.css') }}">
 </head>
 <body>
     <h1 id="welcome">Welcome, {{ user }}</h1>
@@ -12,11 +13,15 @@
 
     <form action="{{ url_for('accept') }}" method="post">
         {% for i in range(0, num) %}
-            <button type="submit" class="{{ state[i] }}" id="{{ i }}" name="spot" value="{{ i }}">{{ i }}</button>
+            <button type="submit" class="class_{{ state[i] }}" id="id_{{ i }}" name="spot" value="{{ i }}">{{ i }}</button>
         {% endfor %}
     </form>
 
     <audio src="{{ url_for('static', filename=audio_name)}}" hidden autoplay></audio>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src = "{{ url_for('static', filename='disable.js') }}"></script>
 
 </body>
 </html>

@@ -1,0 +1,33 @@
+/*
+This file handles the style of the buttons:
+
+ it disables the occupied spots and highlights the suggested ones.
+ The id of each button indicates the spot it represents
+ The class of the button reflects te "state" of the spot,
+ directly using the logic of the array in the "choice" route:
+
+    # class flag:
+    # 0 -> free
+    # 1 -> taken
+    # 2 -> suggested
+ */
+
+button {
+    height: 30px;
+    width: 50px;
+}
+
+.class_0 {
+    background: green;
+    opacity: 0.7;
+}
+
+.class_1 {
+    background: red;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.class_2{
+    background: gold;
+}
