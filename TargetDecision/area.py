@@ -17,7 +17,7 @@ The URI exposed to the ACS
 
 Returns the target spot assigned to the supplied plate number
 """
-@app.route("/target/<str:plate>")
+@app.route("/target/<plate>")
 def target(plate: str):
     targetSpot = arrival.targetSpot[plate]
     del arrival.targetSpot[plate]

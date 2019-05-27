@@ -11,6 +11,8 @@ Indirectly handles some events ('Occupation', 'StoreyArrival', and 'StoreyExit')
 Provides useful functions to access information on the situation inside
 """
 
+from typing import List
+
 
 """
 ID: storey-unique identifier
@@ -97,7 +99,7 @@ def getCirculating():
 Returns the list of free spots
 """
 def getFreeSpots():
-    freeSpots: list[Spot] = []
+    freeSpots: List[Spot] = []
 
     for spot in storey.spots:
         if not spot.occupied:

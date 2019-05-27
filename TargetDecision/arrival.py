@@ -10,6 +10,7 @@ Indirectly handles the event 'EntranceArrival'
 
 import requests
 import spots
+from typing import List, Dict
 
 
 # The next prompt to be displayed on the touch-screen, updated by handleEntranceArrival()
@@ -17,9 +18,9 @@ nextPrompt = None
 # The last plate number arrived, updated by handleEntranceArrival()
 lastPlate: str = ""
 # The plate -> targetSpot mapping, written by addChoice() and destructively read by area.target()
-targetSpot: dict[str, int] = {}
+targetSpot: Dict[str, int] = {}
 # The port for the REST interface exposed by the UMS to the TDS
-UM_TDport = 5000
+UM_TDport: int
 UM_TD_APIprefix = "/api/v1/"
 
 
@@ -36,8 +37,11 @@ class User:
 Encapsulates the information to be displayed on the touch-screen
 """
 class UserPrompt:
-    def __init__(self, free: int, circulating: int, suggestions: list[spots.Spot]):
-        self.free = free
+    def __init__(self, username: str, nSpots: int, freeSpots: List[spots.Spot],
+                 circulating: int, suggestions: List[spots.Spot]):
+        self.username = username
+        self.nSpots = nSpots
+        self.freeSpots = freeSpots
         self.circulating = circulating
         self.suggestions = suggestions
 
@@ -59,15 +63,15 @@ Does the actual reasoning, coming up with the list of candidate spots to suggest
 Simply filters free spots according to whether their properties include the user preference
 """
 def getPromptFromUser(user: User):
-    free = spots.getFree()
+    freeSpots = spots.getFreeSpots()
     circulating = spots.getCirculating()
     suggestions = []
 
-    for spot in spots.getFreeSpots():
+    for spot in freeSpots:
         if user.preference in spot.properties:
             suggestions.append(spot)
 
-    return UserPrompt(free, circulating, suggestions)
+    return UserPrompt(user.username, spots.nSpots, freeSpots, circulating, suggestions)
 
 
 """
