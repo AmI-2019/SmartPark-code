@@ -10,7 +10,7 @@ The Website exposed to the TS (Touch-Screen) to collect the user's choice
 from flask import Flask, redirect, url_for, render_template, request
 from gtts import gTTS
 import os
-#import arrival
+import arrival
 
 app = Flask(__name__)
 # The port for the Website exposed to the TS
@@ -56,19 +56,39 @@ def choice():
     # circulating -> number of cars circulating on the storey
     # audio_name -> name of the audio file used in the page
 
-    #DEBUG
-    #user = input("Nuovo utente: ")
-    #/DEBUG
-
-    user="Andrea"
-    num = 4
     # "state" flag:
     # 0 -> free
     # 1 -> taken
     # 2 -> suggested
-    state = [2, 0, 0, 1]
-    free = num-state.count(1)
-    circulating = 1
+
+    prompt: arrival.UserPrompt = arrival.nextPrompt
+    num = prompt.nSpots
+    free = len(prompt.freeSpots)
+    circulating = prompt.circulating
+    user = prompt.username
+
+    state=[]
+    #Creating the list that contains the state of each spot
+    for i in range(30):
+        state[i]=1
+
+    #marking the free spots
+    for free_spot in prompt.freeSpots:
+        state[free_spot.id]=0
+
+    # marking the suggested spots
+    for suggested_spot in prompt.suggestions:
+        state[suggested_spot.id] = 2
+
+
+    #DEBUG
+    #num=6
+    #user = "Andrea"
+    #state=[1,0,1,2,2,0]
+    #free=4
+    #circulating=3
+    #/DEBUG
+
     audio_name = "audio_file_" + user + ".mp3"
 
     if not os.path.isfile("static/" + audio_name):
@@ -91,8 +111,11 @@ def accept():
     #A print of the chosen element fot debugging purposes
     spot_chosen=request.form["spot"]
 
-    print(spot_chosen)
+    #DEBUG:
+    # print(spot_chosen)
+    #/DEBUG
 
+    arrival.addChoice(spot_chosen)
     return redirect(url_for("idle"))
 
 
