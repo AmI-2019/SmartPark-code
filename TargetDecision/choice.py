@@ -14,7 +14,7 @@ import os
 
 app = Flask(__name__)
 # The port for the Website exposed to the TS
-TD_TSport = 5002
+TD_TSport: int
 
 
 """
@@ -96,9 +96,13 @@ def accept():
     return redirect(url_for("idle"))
 
 
-if __name__ == '__main__':
-    # host being '0.0.0.0' allows for public visibility
-    #app.run(host="0.0.0.0", port=5001)
+def main(port: int):
+    global TD_TSport
 
-    # using localhost to debug
-    app.run()
+    TD_TSport = port
+    # host being '0.0.0.0' allows for public visibility
+    app.run(host="0.0.0.0", port=TD_TSport)
+
+
+if __name__ == '__main__':
+    main(5002)

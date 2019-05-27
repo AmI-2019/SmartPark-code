@@ -9,7 +9,7 @@ import arrival
 
 app = Flask(__name__)
 # The port for the REST interface exposed by the TDS to the ACS
-TD_ACport = 5001
+TD_ACport: int
 
 
 """
@@ -28,6 +28,9 @@ def target(plate: str):
 """
 Blocks and listens for HTTP requests, needs to be executed in a separate thread
 """
-def main():
+def main(port: int):
+    global TD_ACport
+
+    TD_ACport = port
     # host being '0.0.0.0' allows for public visibility
     app.run(host="0.0.0.0", port=TD_ACport)

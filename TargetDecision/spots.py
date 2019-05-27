@@ -41,6 +41,7 @@ class Storey:
 
 
 storey: Storey
+nSpots: int
 
 
 """
