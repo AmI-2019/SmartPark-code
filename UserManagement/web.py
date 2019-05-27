@@ -1,108 +1,130 @@
 from flask import Flask, render_template, redirect, url_for, request, session
-import UserManagement.backend
+import backend
 
 app = Flask(__name__)
 
-#File that contains the routes for the pages of the website
+# File that contains the routes for the pages of the website
 
-#Redirection
+# Secret key
+app.secret_key = "SecretKey"
+
+# Redirection
 @app.route('/')
 def beginning():
     return redirect(url_for("index"))
 
-#Main page for the profiling website
+# Main page for the profiling website
 @app.route('/index')
 def index():
-    return render_template("index.html")
+    username = session.get("username", "")
 
-#Page that allows a user to access to their profile:
-#Authentication via username and password
-#Asks for a flag that indicates if there was a previous failed login attempt
-@app.route('/login', methods=["POST"])
+    # Flag:
+    # 0 -> user authenticated
+    # 1 -> user not authenticated
+
+    flag = 0
+    if (username == ""):
+        flag = 1
+
+    return render_template("index.html", flag=flag)
+
+# Page that allows a user to access to their profile:
+# Authentication via username and password
+# Asks for a flag that indicates if there was a previous failed login attempt
+@app.route('/login')
 def login():
     # flag:
     # 0 -> normal login
     # 1 -> error message: invalid username
     # 2 -> error message: invalid password
-    flag=request.form["flag"]
-    return render_template("login.html", flag = flag)
+    flag = int(request.args.get('flag'))
+    return render_template("login.html", flag=flag)
 
-#Route that handles the login:
-#Returns the status of the login
+# Route that handles the login:
+# Returns the status of the login
 @app.route('/login_control', methods=["POST"])
 def login_control():
+    username = request.form["username"]
+    password = request.form["password"]
+
     # flag:
     # 0 -> normal login
     # 1 -> error message: invalid username
     # 2 -> error message: invalid password
-    username = request.form["username"]
-    password = request.form["password"]
 
     # Check if user exists
-    true_password = UserManagement.backend.showPassword(username)
+    true_password = backend.showPassword(username)
     if (true_password == -1):
-        return render_template("login.html", flag=1)
+        return redirect(url_for("login", flag=1))
 
     # check if password is correct
     if (true_password != password):
-        return render_template("login.html", flag=2)
+        return redirect(url_for("login", flag=2))
 
-    # result is a tuple of tuples
-    result = UserManagement.backend.showUserFromUsername(username)
-    plate=result[0]
-    preference=result[1]
-
-    plate_with_spaces=plate[0:2]+" "+plate[2:7]
-    return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)
+    # Update the state variable
+    session["username"] = username
+    return redirect(url_for("user_page"))
 
 
-#Page that allows the creation of a new profile:
-#Asks for a flag that indicates if there was a previous failed login attempt
-@app.route('/new_user', methods=["POST"])
+# Page that allows the creation of a new profile:
+# Asks for a flag that indicates if there was a previous failed login attempt
+@app.route('/new_user')
 def new_user():
     # flag:
     # 0 -> normal creation
-    # 1 -> error message: plate already taken
-    # 2 -> error message: username already taken
-    # 3 -> error message: plate field empty
+    # 1 -> plate already taken
+    # 2 -> username already taken
+    # 3 -> plate field empty
     # 4 -> username field empty
-    flag=request.form["flag"]
-    return render_template("new_user.html", flag = flag)
+    # 5 -> password field empty
+    # 6 -> plate number incorrect
+    flag=int(request.args.get('flag'))
+    return render_template("new_user.html", flag=flag)
 
-#Route that handles the creation of a new profile:
-#Returns the status of the insertion to the site
+# Route that handles the creation of a new profile:
+# Returns the status of the insertion to the site
 @app.route('/new_user_creation', methods=["POST"])
 def new_user_creation():
     # flag:
     # 0 -> normal creation
-    # 1 -> error message: plate already taken
-    # 2 -> error message: username already taken
-    # 3 -> error message: plate field empty
+    # 1 -> plate already taken
+    # 2 -> username already taken
+    # 3 -> plate field empty
     # 4 -> username field empty
+    # 5 -> password field empty
+    # 6 -> plate number incorrect
     username = request.form["username"]
     password = request.form["password"]
     plate = request.form["plate"]
     preference = request.form["preference"]
 
-    flag = UserManagement.backend.newUser(username, password, plate, int(preference))
+    flag = backend.newUser(username, password, plate, int(preference))
 
-    if(flag == 0):
-        #Successful creation
-        plate_with_spaces = plate[0:2] + " " + plate[2:5] + " " + plate[5:7]
-        return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)
+    if (flag == 0):
+        # Successful creation
+        # Update the state variable
+        session["username"] = username
+        return redirect(url_for("user_page"))
 
-    #Failed creation
-    return render_template("new_user.html", flag=flag)
+    # Failed creation
+    return redirect(url_for("new_user", flag=flag))
 
-#Personal page: given the username, it shows the relative page
-@app.route('/user_page', methods=["POST"])
+# Personal page: given the username, it shows the relative page
+@app.route('/user_page')
 def user_page():
-    username = request.form["username"]
-    plate = request.form["plate"]
-    preference = request.form["preference"]
-    plate_with_spaces=plate[0:2]+" "+plate[2:5]+" "+plate[5:7]
+    username = session["username"]
+    result = backend.showUserFromUsername(username)
+    plate = result[0]
+    preference = result[1]
+    plate_with_spaces = plate[0:2]+" "+plate[2:7]
 
     return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)
+
+# Route that handles the logout and calls the initial page
+@app.route('/logout')
+def logout():
+    session["username"] = ""
+    return redirect(url_for("index"))
 
 if __name__ == '__main__':
     app.run()

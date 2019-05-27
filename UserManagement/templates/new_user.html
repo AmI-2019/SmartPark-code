@@ -30,14 +30,16 @@
         <input type="submit" value="Enter">
     </form>
 
-    <!-- flag:
-    # 0 -> normal creation
-    # 1 -> error message: plate already taken
-    # 2 -> error message: username already taken
-    # 3 -> error message: plate field empty
-    # 4 -> error message: username field empty
-    # 5 -> error message: password field empty
+    <!-- Flag:
+    0 -> normal creation
+    1 -> error message: plate already taken
+    2 -> error message: username already taken
+    3 -> error message: plate field empty
+    4 -> error message: username field empty
+    5 -> error message: password field empty
+    6 -> error message: plate number incorrect
     -->
+
     {% if flag == 1 %}
         <br>
         <p>Error: Plate number already taken</p>
@@ -57,6 +59,10 @@
     {% if flag == 5 %}
         <br>
         <p>Error: Password field empty</p>
+    {% endif %}
+    {% if flag == 6 %}
+        <br>
+        <p>Error: Plate number incorrect</p>
     {% endif %}
 
     <form action = "{{ url_for('index') }}">
