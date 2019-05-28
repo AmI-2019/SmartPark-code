@@ -10,7 +10,7 @@ import threading
 UM_TDport = 5000
 # The port for the REST interface exposed by the TDS to the ACS
 TD_ACport = 5001
-# The port for the Website exposed to the TS
+# The port for the Website exposed to the TdS
 TD_TSport = 5002
 
 

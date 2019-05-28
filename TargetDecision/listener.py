@@ -17,7 +17,7 @@ import spots
 import arrival
 
 
-brokerHost = "192.168.80.128"
+brokerHost = "localhost"
 clientID = "TargetDecision"
 occupationTopic = "storey/spot/+"
 entranceArrivalTopic = "entrance/plate"
