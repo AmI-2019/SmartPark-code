@@ -6,6 +6,7 @@ import arrival
 import threading
 
 
+DBG: bool = True
 # The port for the REST interface exposed by the UMS to the TDS
 UM_TDport = 5000
 # The port for the REST interface exposed by the TDS to the ACS
@@ -21,6 +22,8 @@ if __name__ == '__main__':
 
     spots.initMap()
     arrival.UM_TDport = UM_TDport
+    listener.DBG = spots.DBG = area.DBG = arrival.DBG = choice.DBG = DBG
+
     listenerThread.start()
     areaThread.start()
     choiceThread.start()

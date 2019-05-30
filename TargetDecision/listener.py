@@ -17,6 +17,8 @@ import spots
 import arrival
 
 
+DBG: bool
+debugPrefix = "LISTENER: "
 brokerHost = "localhost"
 clientID = "TargetDecision"
 occupationTopic = "storey/spot/+"
@@ -30,7 +32,10 @@ The callback for when the client receives a CONNACK response from the server.
 Subscriptions are made here, so that they are automatically renewed at every reconnection.
 """
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code ", str(rc))
+    print(debugPrefix, "on_connect")
+    print("Connected, result code = ", str(rc))
+    print("Going to subscribe")
+    print("\n")
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
@@ -54,6 +59,11 @@ def handleOccupation(client, userdata, msg):
     spotID = topics[2]
     # The payload needs to be decoded from binary to str, then converted to int
     occupiedAsInt = int(msg.payload.decode())
+    if DBG:
+        print(debugPrefix, "handleOccupation")
+        print("Topics = ", topics, " occupiedAsInt = ", occupiedAsInt)
+        print("Going to call spots.handleOccupation")
+        print("\n")
 
     # The second argument must be a bool
     spots.handleOccupation(spotID, occupiedAsInt == 1)
@@ -69,10 +79,13 @@ The message is structured as follows:
 This event is handled by the 'arrival' module.
 """
 def handleEntranceArrival(client, userdata, msg):
-    topics = msg.topic.split("/")
-    plate = topics[1]
+    plate = str(msg.payload.decode())
+    if DBG:
+        print(debugPrefix, "handleEntranceArrival")
+        print("Plate = ", plate)
+        print("Going to call arrival.handleEntranceArrival")
+        print("\n")
 
-    # The second argument must be a bool
     arrival.handleEntranceArrival(plate)
 
 
@@ -87,6 +100,11 @@ This event is handled by the 'spots' module.
 """
 def handleStoreyArrival(client, userdata, msg):
     plate = str(msg.payload.decode())
+    if DBG:
+        print(debugPrefix, "handleStoreyArrival")
+        print("Plate = ", plate)
+        print("Going to call spots.handleStoreyArrival")
+        print("\n")
 
     spots.handleStoreyArrival(plate)
 
@@ -101,6 +119,10 @@ The message is structured as follows:
 This event is handled by the 'spots' module.
 """
 def handleStoreyExit(client, userdata, msg):
+    if DBG:
+        print(debugPrefix, "handleStoreyExit")
+        print("Going to call spots.handleStoreyExit")
+        print("\n")
     spots.handleStoreyExit()
 
 
@@ -117,6 +139,11 @@ The main function of this module, to be executed in a separate thread
 Sets callbacks for specific topics, connects to the broker, then waits for incoming messages
 """
 def main():
+    if DBG:
+        print(debugPrefix, "main")
+        print("Just started; going to add callbacks, connect, and loop forever")
+        print("")
+
     client = mqtt.Client(client_id=clientID)
 
     client.on_connect = on_connect
@@ -126,9 +153,15 @@ def main():
     client.message_callback_add(sub=storeyExitTopic, callback=handleStoreyExit)
     client.on_message = on_message
 
+    if DBG:
+        print("Callbacks added; going to connect and loop forever")
+        print("")
     # Will generate a CONNACK response from the server, triggering the on_connect() callback
     client.connect(brokerHost)
 
+    if DBG:
+        print("Connected; going to loop forever")
+        print("\n")
     # Blocking function that automatically handles reconnection, and triggers the appropriate callback
     # for every incoming message
     client.loop_forever()

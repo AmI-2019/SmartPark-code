@@ -12,6 +12,7 @@ from gtts import gTTS
 import os
 import arrival
 
+DBG: bool
 app = Flask(__name__)
 # The port for the Website exposed to the TS
 TD_TSport: int

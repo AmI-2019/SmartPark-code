@@ -13,6 +13,8 @@ import spots
 from typing import List, Dict
 
 
+DBG: bool
+debugPrefix = "ARRIVAL: "
 # The next prompt to be displayed on the touch-screen, updated by handleEntranceArrival()
 nextPrompt = None
 # The last plate number arrived, updated by handleEntranceArrival()
@@ -50,9 +52,18 @@ class UserPrompt:
 Retrieves the user information for the supplied plate, via the REST API exposed by the UMS
 """
 def getUserFromPlate(plate: str):
+    if DBG:
+        print(debugPrefix, "getUserFromPlate")
+        print("Going to retrieve user from plate ", plate)
+        print("")
+
     resp = requests.get(url="localhost:" + str(UM_TDport) + UM_TD_APIprefix + plate)
     # JSON is decoded into a dictionary
     asDict = resp.json()
+
+    if DBG:
+        print("User (asDict) = ", asDict)
+        print("\n")
 
     return User(asDict["username"], asDict["preference"])
 
@@ -63,6 +74,11 @@ Does the actual reasoning, coming up with the list of candidate spots to suggest
 Simply filters free spots according to whether their properties include the user preference
 """
 def getPromptFromUser(user: User):
+    if DBG:
+        print(debugPrefix, "getPromptFromUser")
+        print("Going to compute list of suggestions for user ", user)
+        print("")
+
     freeSpots = spots.getFreeSpots()
     circulating = spots.getCirculating()
     suggestions = []
@@ -70,6 +86,10 @@ def getPromptFromUser(user: User):
     for spot in freeSpots:
         if user.preference in spot.properties:
             suggestions.append(spot)
+
+    if DBG:
+        print("Returning suggested spots ", suggestions)
+        print("\n")
 
     return UserPrompt(user.username, spots.nSpots, freeSpots, circulating, suggestions)
 
@@ -82,11 +102,31 @@ Makes the 'nextPrompt' ready to be displayed
 def handleEntranceArrival(plate: str):
     global nextPrompt, lastPlate
 
+    if DBG:
+        print(debugPrefix, "handleEntranceArrival")
+        print("Plate ", plate, "arrived at the entrance, going to compute Prompt")
+        print("")
+
     user = getUserFromPlate(plate)
     lastPlate = plate
     nextPrompt = getPromptFromUser(user)
 
+    if DBG:
+        print("Prompt to be displayed: ", nextPrompt)
+        print("\n")
 
+
+"""
+Called by 'choice.accept()'
+
+Registers user choice for 'lastPlate', the only pending car
+"""
 def addChoice(spotID: int):
     targetSpot[lastPlate] = spotID
+
+    if DBG:
+        print(debugPrefix, "addChoice")
+        print("Plate ", lastPlate, ", the only pending car, chose the spot number ", spotID)
+        print("\n")
+
 
