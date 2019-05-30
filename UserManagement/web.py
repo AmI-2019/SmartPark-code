@@ -8,10 +8,12 @@ app = Flask(__name__)
 # Secret key
 app.secret_key = "SecretKey"
 
+
 # Redirection
 @app.route('/')
 def beginning():
     return redirect(url_for("index"))
+
 
 # Main page for the profiling website
 @app.route('/index')
@@ -28,6 +30,7 @@ def index():
 
     return render_template("index.html", flag=flag)
 
+
 # Page that allows a user to access to their profile:
 # Authentication via username and password
 # Asks for a flag that indicates if there was a previous failed login attempt
@@ -39,6 +42,7 @@ def login():
     # 2 -> error message: invalid password
     flag = int(request.args.get('flag'))
     return render_template("login.html", flag=flag)
+
 
 # Route that handles the login:
 # Returns the status of the login
@@ -81,6 +85,7 @@ def new_user():
     flag=int(request.args.get('flag'))
     return render_template("new_user.html", flag=flag)
 
+
 # Route that handles the creation of a new profile:
 # Returns the status of the insertion to the site
 @app.route('/new_user_creation', methods=["POST"])
@@ -109,6 +114,7 @@ def new_user_creation():
     # Failed creation
     return redirect(url_for("new_user", flag=flag))
 
+
 # Personal page: given the username, it shows the relative page
 @app.route('/user_page')
 def user_page():
@@ -120,11 +126,13 @@ def user_page():
 
     return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)
 
+
 # Route that handles the logout and calls the initial page
 @app.route('/logout')
 def logout():
     session["username"] = ""
     return redirect(url_for("index"))
 
-if __name__ == '__main__':
-    app.run()
+
+def main(port: int):
+    app.run(host="0.0.0.0", port=port)

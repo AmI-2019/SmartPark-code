@@ -15,5 +15,6 @@ def userFromPlate(plate):
     user=backend.showUserFromPlate(plate)
     return jsonify(user)
 
-if __name__ == '__main__':
-    app.run()
+
+def main(port: int):
+    app.run(host="0.0.0.0", port=port)
