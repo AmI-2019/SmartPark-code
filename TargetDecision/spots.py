@@ -12,6 +12,7 @@ Provides useful functions to access information on the situation inside
 """
 
 from typing import List
+import arrival
 
 
 """
@@ -107,18 +108,6 @@ def handleStoreyExit():
 
 
 """
-Returns the number of free spots
-"""
-def getFree():
-    if DBG:
-        print(debugPrefix, "getFree")
-        print("Returning number of free spots")
-        print("free = ", storey.free, ", circulating = ", storey.circulating)
-        print("\n")
-    return storey.free
-
-
-"""
 Returns the number of circulating cars
 """
 def getCirculating():
@@ -137,7 +126,7 @@ def getFreeSpots():
     freeSpots: List[Spot] = []
 
     for spot in storey.spots:
-        if not spot.occupied:
+        if not spot.occupied and spot.ID not in arrival.targetSpot.values():
             freeSpots.append(spot)
 
     if DBG:

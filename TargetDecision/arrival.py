@@ -30,7 +30,7 @@ UM_TD_APIprefix = "/api/v1/"
 Encapsulates the information returned by the API
 """
 class User:
-    def __init__(self, username, preference):
+    def __init__(self, username, preference: int):
         self.username = username
         self.preference = preference
 
@@ -57,15 +57,15 @@ def getUserFromPlate(plate: str):
         print("Going to retrieve user from plate ", plate)
         print("")
 
-    resp = requests.get(url="localhost:" + str(UM_TDport) + UM_TD_APIprefix + plate)
-    # JSON is decoded into a dictionary
-    asDict = resp.json()
+    resp = requests.get("http://localhost:" + str(UM_TDport) + UM_TD_APIprefix + plate)
+    # JSON is decoded into a list
+    asList = resp.json()
 
     if DBG:
-        print("User (asDict) = ", asDict)
+        print("User (asList) = ", asList)
         print("\n")
 
-    return User(asDict["username"], asDict["preference"])
+    return User(asList[0], int(asList[1]))
 
 
 """

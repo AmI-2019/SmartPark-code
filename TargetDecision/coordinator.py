@@ -11,7 +11,7 @@ DBG: bool = True
 UM_TDport = 5000
 # The port for the REST interface exposed by the TDS to the ACS
 TD_ACport = 5001
-# The port for the Website exposed to the TdS
+# The port for the Website exposed to the TS
 TD_TSport = 5002
 
 
@@ -20,9 +20,9 @@ if __name__ == '__main__':
     areaThread = threading.Thread(target=area.main, args=(TD_ACport,))
     choiceThread = threading.Thread(target=choice.main, args=(TD_TSport,))
 
+    listener.DBG = spots.DBG = area.DBG = arrival.DBG = choice.DBG = DBG
     spots.initMap()
     arrival.UM_TDport = UM_TDport
-    listener.DBG = spots.DBG = area.DBG = arrival.DBG = choice.DBG = DBG
 
     listenerThread.start()
     areaThread.start()
