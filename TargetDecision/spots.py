@@ -133,7 +133,7 @@ def getFreeSpots():
         print(debugPrefix, "getFreeSpots")
         print("Returning list of free spots")
         print("free = ", storey.free, ", circulating = ", storey.circulating)
-        print("freeSpots = ", freeSpots)
+        print("freeSpots = ", [s.ID for s in freeSpots])
         print("\n")
 
     return freeSpots

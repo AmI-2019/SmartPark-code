@@ -88,7 +88,7 @@ def getPromptFromUser(user: User):
             suggestions.append(spot)
 
     if DBG:
-        print("Returning suggested spots ", suggestions)
+        print("Returning suggested spots ", [s.ID for s in suggestions])
         print("\n")
 
     return UserPrompt(user.username, spots.nSpots, freeSpots, circulating, suggestions)
@@ -110,10 +110,6 @@ def handleEntranceArrival(plate: str):
     user = getUserFromPlate(plate)
     lastPlate = plate
     nextPrompt = getPromptFromUser(user)
-
-    if DBG:
-        print("Prompt to be displayed: ", nextPrompt)
-        print("\n")
 
 
 """
