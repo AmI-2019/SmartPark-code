@@ -40,8 +40,15 @@ button#idle {
     height: 100px;
     width: 300px;
     position: absolute;
-    top: 501px;
+    top: 531px;
     left: 152px;
+}
+
+#transparent_text {
+    margin: auto;
+    width: 50%;
+    font-size: 24px;
+    padding-top: 350px;
 }
 
 button {
