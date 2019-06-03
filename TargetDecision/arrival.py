@@ -63,7 +63,8 @@ def getUserFromPlate(plate: str):
 
     if DBG:
         print("User (asList) = ", asList)
-        print("\n")
+        print(debugPrefix, "getUserFromPlate ENDING")
+        print("")
 
     return User(asList[0], int(asList[1]))
 
@@ -79,6 +80,9 @@ def getPromptFromUser(user: User):
         print("Going to compute list of suggestions for user ", user)
         print("")
 
+    if spots.isTransparent():
+        return None
+
     freeSpots = spots.getFreeSpots()
     circulating = spots.getCirculating()
     suggestions = []
@@ -89,7 +93,8 @@ def getPromptFromUser(user: User):
 
     if DBG:
         print("Returning suggested spots ", [s.ID for s in suggestions])
-        print("\n")
+        print(debugPrefix, "getPromptFromUser ENDING")
+        print("")
 
     return UserPrompt(user.username, spots.nSpots, freeSpots, circulating, suggestions)
 
@@ -111,6 +116,10 @@ def handleEntranceArrival(plate: str):
     lastPlate = plate
     nextPrompt = getPromptFromUser(user)
 
+    if DBG:
+        print(debugPrefix, "handleEntranceArrival ENDING")
+        print("")
+
 
 """
 Called by 'choice.accept()'
@@ -123,6 +132,7 @@ def addChoice(spotID: int):
     if DBG:
         print(debugPrefix, "addChoice")
         print("Plate ", lastPlate, ", the only pending car, chose the spot number ", spotID)
-        print("\n")
+        print(debugPrefix, "addChoice ENDING")
+        print("")
 
 
