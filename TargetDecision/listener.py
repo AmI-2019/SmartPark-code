@@ -62,7 +62,7 @@ This event is handled by the 'spots' module.
 """
 def handleOccupation(client, userdata, msg):
     topics = msg.topic.split("/")
-    spotID = topics[2]
+    spotID = int(topics[2])
     # The payload needs to be decoded from binary to str, then converted to int
     occupiedAsInt = int(msg.payload.decode())
 

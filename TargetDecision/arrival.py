@@ -57,7 +57,7 @@ def getUserFromPlate(plate: str):
         print("Going to retrieve user from plate ", plate)
         print("")
 
-    resp = requests.get("localhost:" + str(UM_TDport) + UM_TD_APIprefix + plate)
+    resp = requests.get("http://localhost:" + str(UM_TDport) + UM_TD_APIprefix + plate)
     # JSON is decoded into a list
     asList = resp.json()
 
