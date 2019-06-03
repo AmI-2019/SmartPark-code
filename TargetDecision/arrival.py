@@ -77,10 +77,13 @@ Simply filters free spots according to whether their properties include the user
 def getPromptFromUser(user: User):
     if DBG:
         print(debugPrefix, "getPromptFromUser")
-        print("Going to compute list of suggestions for user ", user)
+        print("Going to compute list of suggestions for user ", user.username)
         print("")
 
     if spots.isTransparent():
+        if DBG:
+            print("Transparency: returning None ")
+            print("")
         return None
 
     freeSpots = spots.getFreeSpots()
