@@ -21,7 +21,7 @@ TD_TSport: int
 
 """
 The base route, loaded at boot.
-Should just redirect to the idle page.
+Just redirects to the idle page.
 """
 @app.route("/")
 def start():
@@ -36,7 +36,7 @@ def start():
 
 """
 The idle page.
-Should include a link to the choice page.
+Links to the choice page.
 """
 @app.route("/idle")
 def idle():
@@ -52,8 +52,8 @@ def idle():
 """
 The choice page. 
 
-Should return (to the Touch-Screen) a JSON version of arrival.nextPrompt.
-Should include a form for POSTing data to the accept route
+Return (to the Touch-Screen) a visual rendering of arrival.nextPrompt.
+Includes a form for POSTing data to the accept route
 """
 @app.route("/choice")
 def choice():
@@ -125,8 +125,8 @@ def choice():
 """
 The accept route.
 
-Should only pass the payload (user's choice), as an int, to arrival.addChoice(),
-then redirect to the idle page
+Simply passes the payload (user's choice), as an int, to arrival.addChoice(),
+then redirects to the idle page
 """
 @app.route("/accept", methods=["POST"])
 def accept():
@@ -150,6 +150,10 @@ def accept():
     return redirect(url_for("idle"))
 
 
+"""
+Manages the interaction to the Touch-Screen
+Needs to be called in a separate thread
+"""
 def main(port: int):
     global TD_TSport
 
