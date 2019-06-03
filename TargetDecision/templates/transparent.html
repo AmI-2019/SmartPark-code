@@ -7,12 +7,13 @@
      content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
     />
     <link rel="stylesheet" href="{{ url_for('static', filename='buttons.css') }}">
-    <title>Idle</title>
+    <title>No suggestions</title>
 </head>
 <body class="idle">
 
-    <a href="{{ url_for('choice') }}">
-        <button id="idle">Go to the selection page</button>
+        <p>The parking lot is not loaded, go take the spot you want.</p>
+    <a href="{{ url_for('idle') }}">
+        <button id="idle">Ok!</button>
     </a>
 
 </body>
