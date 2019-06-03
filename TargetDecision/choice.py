@@ -76,8 +76,13 @@ def choice():
     # 0 -> free
     # 1 -> taken
     # 2 -> suggested
-
+    """
     prompt: arrival.UserPrompt = arrival.nextPrompt
+    
+    # if the assistance is not needed, no input is required.
+    if prompt is None:
+        return redirect(url_for("transparent"));
+    
     num = prompt.nSpots
     free = len(prompt.freeSpots)
     circulating = prompt.circulating
@@ -95,14 +100,15 @@ def choice():
     # marking the suggested spots
     for suggested_spot in prompt.suggestions:
         state[suggested_spot.ID] = 2
+    """
 
-
-    #DEBUG
-    #num=6
-    #user = "Andrea"
-    #state=[1,0,1,2,2,0]
-    #free=4
-    #circulating=3
+    # DEBUG
+    return redirect(url_for("transparent"));
+    num=8
+    user = "Andrea"
+    state=[1,0,1,2,2,0,2,1]
+    free=5
+    circulating=2
     #/DEBUG
 
     audio_name = "audio_file_" + user + ".mp3"
@@ -118,6 +124,18 @@ def choice():
         print("\n")
 
     return render_template("choice.html", user=user, num=num, state=state, free=free, circulating=circulating, audio_name=audio_name)
+
+"""
+The alternative choice page.
+
+It's used when no suggestion is needed.
+"""
+@app.route("/transparent")
+def transparent():
+    #Only to signal the arrival of the user.
+
+    arrival.addChoice(-1)
+    return render_template("transparent.html")
 
 """
 The accept route.
