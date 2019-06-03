@@ -34,9 +34,10 @@ circulating: number of circulating cars, dynamically changes
 spots: list of all spots
 """
 class Storey:
-    def __init__(self, nSpots):
+    def __init__(self, nSpots, thresh):
         self.nSpots = nSpots
         self.free = nSpots
+        self.thresh = thresh
         self.circulating = 0
         self.spots = []
         for i in range(nSpots):
@@ -68,7 +69,8 @@ def handleOccupation(ID: int, occupied: bool):
         if DBG:
             print("Spot number ", ID, " is now occupied, free spots and circulating cars have decreased")
             print("free = ", storey.free, ", circulating = ", storey.circulating)
-            print("\n")
+            print(debugPrefix, "handleOccupation ENDING")
+            print("")
     else:
         storey.free += 1
         # When a car exits the spot, it becomes circulating again, until it exits the storey
@@ -76,7 +78,8 @@ def handleOccupation(ID: int, occupied: bool):
         if DBG:
             print("Spot number ", ID, " is now free, free spots and circulating cars have increased")
             print("free = ", storey.free, ", circulating = ", storey.circulating)
-            print("\n")
+            print(debugPrefix, "handleOccupation, ENDING")
+            print("")
 
 
 """
@@ -90,7 +93,8 @@ def handleStoreyArrival(plate: str):
         print(debugPrefix, "handleStoreyArrival")
         print("Plate ", plate, " just arrived to the storey, circulating cars have increased")
         print("free = ", storey.free, ", circulating = ", storey.circulating)
-        print("\n")
+        print(debugPrefix, "handleStoreyArrival ENDING")
+        print("")
 
 
 """
@@ -104,7 +108,8 @@ def handleStoreyExit():
         print(debugPrefix, "handleStoreyExit")
         print("Someone exited the storey, circulating cars have decreased")
         print("free = ", storey.free, ", circulating = ", storey.circulating)
-        print("\n")
+        print(debugPrefix, "handleStoreyExit ENDING")
+        print("")
 
 
 """
@@ -115,7 +120,8 @@ def getCirculating():
         print(debugPrefix, "getCirculating")
         print("Returning number of circulating cars")
         print("free = ", storey.free, ", circulating = ", storey.circulating)
-        print("\n")
+        print(debugPrefix, "getCirculating ENDING")
+        print("")
     return storey.circulating
 
 
@@ -134,9 +140,21 @@ def getFreeSpots():
         print("Returning list of free spots")
         print("free = ", storey.free, ", circulating = ", storey.circulating)
         print("freeSpots = ", [s.ID for s in freeSpots])
-        print("\n")
+        print(debugPrefix, "getFreeSpots ENDING")
+        print("")
 
     return freeSpots
+
+
+def isTransparent():
+    if DBG:
+        print(debugPrefix, "isTransparent")
+        print("Deciding whether or not to be transparent")
+        print("free = ", storey.free, ", circulating = ", storey.circulating, ", thresh = ", storey.thresh)
+        print(debugPrefix, "isTransparent ENDING")
+        print("")
+
+    return storey.free - storey.circulating >= storey.thresh
 
 
 """
@@ -145,11 +163,23 @@ Sets the layout and the initial configuration of the storey
 def initMap():
     global nSpots, storey
 
-    nSpots = 15
-    storey = Storey(nSpots)
+    nSpots = 8
+    threshold = 6
+    storey = Storey(nSpots, threshold)
+
+    storey.spots[0].properties.append(1)
+    storey.spots[1].properties.append(3)
+    storey.spots[2].properties.append(3)
+    storey.spots[3].properties.append(2)
+    storey.spots[4].properties.append(1)
+    storey.spots[5].properties.append(3)
+    storey.spots[6].properties.append(3)
+    storey.spots[7].properties.append(2)
 
     if DBG:
         print(debugPrefix, "initMap")
         print("Initialising storey layout, nSpots = ", nSpots)
         print("free = ", storey.free, ", circulating = ", storey.circulating)
-        print("\n")
+        print("properties = ", [storey.spots[i].properties for i in range(nSpots)])
+        print(debugPrefix, "initMap ENDING")
+        print("")

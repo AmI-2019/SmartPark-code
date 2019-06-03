@@ -27,7 +27,8 @@ def target(plate: str):
     if DBG:
         print(debugPrefix, "target")
         print("Asked for target spot for plate ", plate, ", returning ", targetSpot)
-        print("\n")
+        print(debugPrefix, "target ENDING")
+        print("")
 
     return str(targetSpot)
 
@@ -41,7 +42,7 @@ def main(port: int):
     if DBG:
         print(debugPrefix, "main")
         print("Starting to listen on port ", port)
-        print("\n")
+        print("")
 
     TD_ACport = port
     # host being '0.0.0.0' allows for public visibility

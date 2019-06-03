@@ -28,7 +28,8 @@ def start():
     if DBG:
         print(debugPrefix, "start")
         print("Requested base route, redirecting to idle")
-        print("\n")
+        print(debugPrefix, "start ENDING")
+        print("")
 
     return redirect(url_for("idle"))
 
@@ -42,7 +43,8 @@ def idle():
     if DBG:
         print(debugPrefix, "idle")
         print("Requested idle, returning idle.html")
-        print("\n")
+        print(debugPrefix, "idle ENDING")
+        print("")
 
     return render_template("idle.html")
 
@@ -115,7 +117,8 @@ def choice():
     if DBG:
         print("user = ", user, ", nSpots = ", num, ", spots state = ", state, ", number of free spots = ",
               free, ", number of circulating cars = ", circulating)
-        print("\n")
+        print(debugPrefix, "choice ENDING")
+        print("")
 
     return render_template("choice.html", user=user, num=num, state=state, free=free, circulating=circulating, audio_name=audio_name)
 
@@ -141,7 +144,8 @@ def accept():
         print(debugPrefix, "accept")
         print("User picked spot number ", spot_chosen)
         print("Redirecting to idle")
-        print("\n")
+        print(debugPrefix, "accept ENDING")
+        print("")
 
     return redirect(url_for("idle"))
 

@@ -32,10 +32,11 @@ The callback for when the client receives a CONNACK response from the server.
 Subscriptions are made here, so that they are automatically renewed at every reconnection.
 """
 def on_connect(client, userdata, flags, rc):
-    print(debugPrefix, "on_connect")
-    print("Connected, result code = ", str(rc))
-    print("Going to subscribe")
-    print("\n")
+    if DBG:
+        print(debugPrefix, "on_connect")
+        print("Connected, result code = ", str(rc))
+        print("Going to subscribe")
+        print("")
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
@@ -43,6 +44,11 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(entranceArrivalTopic)
     client.subscribe(storeyArrivalTopic)
     client.subscribe(storeyExitTopic)
+
+    if DBG:
+        print("Subscribed")
+        print(debugPrefix, "on_connect ENDING")
+        print("")
 
 
 """
@@ -59,14 +65,19 @@ def handleOccupation(client, userdata, msg):
     spotID = topics[2]
     # The payload needs to be decoded from binary to str, then converted to int
     occupiedAsInt = int(msg.payload.decode())
+
     if DBG:
         print(debugPrefix, "handleOccupation")
         print("Topics = ", topics, " occupiedAsInt = ", occupiedAsInt)
         print("Going to call spots.handleOccupation")
-        print("\n")
+        print("")
 
     # The second argument must be a bool
     spots.handleOccupation(spotID, occupiedAsInt == 1)
+
+    if DBG:
+        print(debugPrefix, "handleOccupation ENDING")
+        print("")
 
 
 """
@@ -80,13 +91,18 @@ This event is handled by the 'arrival' module.
 """
 def handleEntranceArrival(client, userdata, msg):
     plate = str(msg.payload.decode())
+
     if DBG:
         print(debugPrefix, "handleEntranceArrival")
         print("Plate = ", plate)
         print("Going to call arrival.handleEntranceArrival")
-        print("\n")
+        print("")
 
     arrival.handleEntranceArrival(plate)
+
+    if DBG:
+        print(debugPrefix, "handleEntranceArrival ENDING")
+        print("")
 
 
 """
@@ -104,9 +120,13 @@ def handleStoreyArrival(client, userdata, msg):
         print(debugPrefix, "handleStoreyArrival")
         print("Plate = ", plate)
         print("Going to call spots.handleStoreyArrival")
-        print("\n")
+        print("")
 
     spots.handleStoreyArrival(plate)
+
+    if DBG:
+        print(debugPrefix, "handleStoreyArrival ENDING")
+        print("")
 
 
 """
@@ -122,8 +142,13 @@ def handleStoreyExit(client, userdata, msg):
     if DBG:
         print(debugPrefix, "handleStoreyExit")
         print("Going to call spots.handleStoreyExit")
-        print("\n")
+        print("")
+
     spots.handleStoreyExit()
+
+    if DBG:
+        print(debugPrefix, "handleStoreyExit ENDING")
+        print("")
 
 
 """
@@ -161,7 +186,7 @@ def main():
 
     if DBG:
         print("Connected; going to loop forever")
-        print("\n")
+        print("")
     # Blocking function that automatically handles reconnection, and triggers the appropriate callback
     # for every incoming message
     client.loop_forever()
