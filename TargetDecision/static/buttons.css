@@ -17,6 +17,12 @@ This file handles the style of the buttons:
 */
 
 /*Sets the background to the choice page*/
+
+body {
+	margin: 0px;
+	font-family: "Open Sans", Sans-serif;
+}
+
 body.choice {
   background-image: url("background_choice.jpg");
   background-repeat: no-repeat;
@@ -33,25 +39,49 @@ body.idle {
 
 #content {
     margin: auto;
-    width: 70%;
+    width: 50%;
 }
 
 button#idle {
-    height: 100px;
-    width: 300px;
+    height: 120px;
+    width: 350px;
+    font-size: 24px;
+    border-radius: 70px;
+    background-color: rgba(255,138,20, 0.7);
+    border: 3px solid rgba(255,138,20, 1);
     position: absolute;
-    top: 531px;
-    left: 152px;
+    top: 521px;
+    left: 127px;
 }
 
+/*Text in the "transparent" page*/
 #transparent_text {
     margin: auto;
     width: 50%;
-    font-size: 24px;
+    font-size: 22px;
+    text-align: center;
     padding-top: 350px;
 }
 
+/*Text in the choice page*/
+#free {
+    float: left;
+    width: 50%;
+}
+
+#circulating {
+    float: right;
+    text-align: right;
+    width: 50%;
+}
+
+#message {
+    padding-top: 30px;
+    text-align: center;
+}
+
 button {
+    outline:none;
     height: 70px;
     width: 100px;
 }
@@ -68,6 +98,7 @@ button {
 /*Handling flash animation*/
 
 .class_2 {
+    background: green;
     animation-name: flash;
 	animation-duration: 3s;
 	animation-timing-function: linear;

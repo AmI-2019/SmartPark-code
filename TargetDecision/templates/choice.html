@@ -12,9 +12,9 @@
 <body class="choice">
     <h1 id="welcome">Welcome, {{ user }}</h1>
     <div id="content">
-        <p>Number of free spots in this storey: {{ free }}</p>
-        <p>Number of cars circulating in this storey: {{ circulating }}</p>
-        <p>Choose one of the selected spots:</p>
+        <span id="free">Free spots: {{ free }}</span>
+        <span id="circulating">Circulating cars: {{ circulating }}</span>
+        <p id="message">Choose one of the selected spots:</p>
     </div>
 
     <form action="{{ url_for('accept') }}" method="post">

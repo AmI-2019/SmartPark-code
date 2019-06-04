@@ -103,7 +103,7 @@ def choice():
     """
 
     # DEBUG
-    return redirect(url_for("transparent"))
+    # return redirect(url_for("transparent"))
     num=8
     user = "Andrea"
     state=[1,0,1,2,2,0,2,1]
