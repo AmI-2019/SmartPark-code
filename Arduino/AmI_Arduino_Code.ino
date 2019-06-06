@@ -1,101 +1,132 @@
-#include "ami.h"
 #include <SPI.h>
-#include <PubSubClient.h>
-#include <Bridge.h>
-#include <BridgeClient.h>
-#include <FastLED.h>
+#include "SmartPark.h"
 
+#include <PubSubClient.h>
+#include <YunClient.h>
+#include <FastLED.h>
+#define BUZZER_PIN 2
+#define FREQUENCY 1000
+#define DURATION 50
 #define LED_PIN 3
+#define MAX_PRES 2
+#define MAX_SIDES 4
 #define NUM_LEDS 30
 #define LED_TYPE WS2812B
 #define COLOR_ORDER GRB
-#define MAX_MEX_SIZE 50 // the maximum number of bytes for the MQTT message
-#define PORT 1883 // the MQTT server port
-#define SENS_NUM 12 // the total number of IR sensors in the system. 12 is the maximum value.
-#define MAX_ROAMING 3 // the maximum number of vehicles that can move within the floor simultaneously
-CRGB leds[NUM_LEDS];
+#define MAX_MEX_SIZE 50                // the maximum number of bytes for the MQTT message
+#define PORT 1883                      // the MQTT server port
+#define MAX_ROAMING 3                  // the maximum number of vehicles that can move within the floor simultaneously
+#define MAX_STRIP 10
+CRGB leds[NUM_LEDS];                       // an array to store the LEDs colors
+CRGB leds_prio[NUM_LEDS][MAX_ROAMING+1];   // a matrix to manage the LEDs color priority
+CRGB assignedCol[MAX_ROAMING];
 
 Sensor sensors[SENS_NUM]; 
 Vehicle vehicles[MAX_ROAMING]; 
-vec numinput;
-Sequence seq; // an object to store the sequence sent by the MQTT broker
-
-
+Sequence seq;                              // an object to store the sequence sent by the MQTT broker
+int expected_sensors[MAX_ROAMING];
+int led_chunk[SENS_NUM][MAX_STRIP];               // this matrix assigns each LED to a sensor
+int presence_sensors[MAX_PRES];
+int parking_sensors[MAX_SIDES];
+const int exit_sensor;
 void callback(char* topic, byte* payload, unsigned int length) { // a function called when a MQTT message is received
-  String input = "";
-  char input2[MAX_MEX_SIZE];
-  const size_t buffersize = SENS_NUM;
-  int buff[buffersize];
+  const int len = length;
+  char *tokenIndex;
+  int assignedSpot;
+  char message[len];
   int sensnum = 0;
-  for(int i = 0; i < length; i++){
-    char a = (char)payload[i];
-      input += a;
-      if(a == ',') {
-        sensnum += 1;
-      }
-    }
-  sensnum += 1;
-  input.toCharArray(input2, MAX_MEX_SIZE);
-  char *p = strtok(input2,",");
   size_t index = 0;
-  while((p != nullptr)&&(index < buffersize)) {
-    buff[index++] = atoi(p);
-    p = strtok(NULL,",");
+  int input[SENS_NUM + 1];                                       // this array stores the assigned spot at index 0 and then the sequence of sensors the vehicle should cross
+  
+  vec input_vec;
+  for(unsigned int i = 0; i < length; i++) {
+    message[i] = (char)payload[i];
+  }                                                              // the MQTT message is converted from a byte array to a char array
+  tokenIndex = strtok(message,",");
+  while((tokenIndex != nullptr)&&(index < SENS_NUM+1)) {         // this loop converts the message to a int array and stores it into input[]
+    sensnum+=1;
+    input[index++] = atoi(tokenIndex);
+    tokenIndex = strtok(NULL, ",");
   }
-  for(int i = 0; i < sensnum; i++) {
-     numinput.v[i] = buff[i];
+  for(unsigned int i = sensnum; i < SENS_NUM + 1; i++) {
+    input[i] = -1;
   }
-  for(int i = sensnum; i < SENS_NUM; i++) {
-    numinput.v[i] = -1;
+  assignedSpot = input[0];                                       // the system stores the assigned spot 
+  sensnum -=1;                                                   // the number of sensors has to be decremented because the first integer passed is not a sensor but the assigned spot
+  Serial.print("Posto assegnato: ");                             // DEBUG prints
+  Serial.println(assignedSpot);
+  Serial.print("Numero sensori: ");
+  Serial.println(sensnum);
+  Serial.println("Sensori: ");
+  for(unsigned int i = 1; i < SENS_NUM+1; i++) {
+    Serial.println(input[i]);
   }
-  seq.setLen(sensnum);
-  seq.fill(numinput);
-  int j = 0;
-  while((j < MAX_ROAMING)&&(!vehicles[j].isFree())) { // look for the first Vehicle object that is not assigned to a vehicle yet
-    j++;
+  for(unsigned int i = 0; i < SENS_NUM; i++) {                   // store the input sequence of sensors into a vec container (it doesn't include the spot number!)
+    input_vec.v[i] = input[i+1];
   }
-  if(j == MAX_ROAMING) {
-  // handle the situation: no roaming vehicles slot available
-  } else {
-    vehicles[j].assignFromSeq(seq);      // the system assigns the passed sequence of sensors to a free Vehicle object
-    Serial.println(vehicles[j].isFree());
+  seq.setLen(sensnum);                                           // store the sequence into a Sequence object
+  seq.fill(input_vec);
+  
+  for(unsigned int i = 0; i < MAX_ROAMING; i++) {                // look for a free Vehicle object and assign the received data to it
+    if(vehicles[i].isFree()) {
+      vehicles[i].assignFromSeq(seq);
+      vehicles[i].lastPosUpdate(0);
+      vehicles[i].updateSpot(assignedSpot);
+      expected_sensors[i] = input[1];
+      for(unsigned int j = 0; j < sensnum; j++) {                // put the Vehicle object's color in queue for the LEDs
+        for(unsigned int k = 0; k < MAX_STRIP; k++) {
+          if (leds_prio[led_chunk[j][k]][i] == CRGB(0,0,0)) {
+            leds_prio[led_chunk[j][k]][i] = assignedCol[i];
+            break;
+          }
+        }
+      }
+      break;
+      
+    }
+    
   }
 }
-const char server[] = "test.mosquitto.org"; // the server IP/URL
-BridgeClient yun;
-PubSubClient client(yun); // clients needed for MQTT communication
+//const char server_test[] = "test.mosquitto.org"; // DEBUG - the test server URL
+IPAddress server(192,168,0,38);                    // the server IP address
+YunClient yun;
+PubSubClient client(yun);                          // clients needed for MQTT communication
 
 void reconnect() {
-  // Loop until we're reconnected
-  while (!client.connected()) {
+  while (!client.connected()) {                           // Loop until we're reconnected
     Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
-    if (client.connect("arduinoClient")) {
-      Serial.println("connected");
-      // Once connected, publish an announcement...
-      client.publish("outTopic","hello world - s246026");
-      // ... and resubscribe
-      client.subscribe("test_246");
+    if (client.connect("arduinoClient")) {                // Attempt to connect
+      Serial.println("connected");                        
+      client.publish("outTopic","yun connection test");   // Once connected, publish an announcement...
+      client.subscribe("test_yun");                       // ... and resubscribe
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
+      Serial.println(" try again in 5 seconds");          
       delay(5000);
     }
   }
 }
 
 void setup() {
+  assignedCol[0] = CRGB::Red;                                      // assigning a color to each Vehicle object
+  assignedCol[1] = CRGB::Green;
+  assignedCol[2] = CRGB::Blue;
   FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);
   Bridge.begin();
   client.setServer(server,PORT);
   client.setCallback(callback);
-  delay(2000); // time required to the hardware to initialize everything
-  Serial.begin(9600); // DEBUG
-  for(int i = 0 ; i < SENS_NUM; i++) { // This loop assigns an ADC pin to every Sensor object, starting from A0 up to A11.
+  delay(2000);                                                     // time required to the hardware to initialize everything
+  Serial.begin(9600);                                              // DEBUG - serial output
+  for(int i = 0 ; i < SENS_NUM; i++) {                             // This loop assigns an ADC pin to every Sensor object, starting from A0 up to A11.
     Sensor item(i+18);
     sensors[i] = item;
+    pinMode(BUZZER_PIN, OUTPUT);
+    // initialize leds_prio to CRGB(0,0,0)
+    // initialize led_chunk (unused spaces are set to -1)
+}
+for(unsigned int i = 0; i < MAX_ROAMING; i++) {                    // expected sensors initialization
+  expected_sensors[i] = 0;
 }
 }
 
@@ -104,22 +135,41 @@ if (!client.connected()) {
     reconnect();
   }
   client.loop();
-  // to-do: assign a different color to each active Vehicle object
-  for(int i = 0; i < SENS_NUM; i++) { // sensors polling loop
-    sensors[i].sense(); 
-    if(sensors[i].isCrossed()) { // when a sensor is crossed, the system checks for a vehicle that is supposed to be there basing on its stored sequence and updates it
-      for(int j = 0; j < MAX_ROAMING; j++) {
-        if(!vehicles[j].isFree()) { // the system only cycles through Vehicles objects that are assigned to a vehicle
-        int next = vehicles[j].getNextPos();
-        if(next == -1) {
-          // handle the situation: the vehicle has arrived to its spot
-        } else if (next == i) {
-          vehicles[j].lastPosUpdate(next); // updating the previous position to the current one
+  for(unsigned int i = 0; i < MAX_ROAMING; i++) {          // strip sensors polling
+    sensors[expected_sensors[i]].sense();
+    if(sensors[expected_sensors[i]].isCrossed()) {         // checks if a sensor is being crossed by a vehicle. The system only polls sensors that are expected to be crossed
+      for(unsigned int j = 0; j < MAX_STRIP; j++) {
+        for(unsigned int k = 0; k < MAX_ROAMING; k++) {    // updates the color priority for the LEDs associated to the current sensor
+          leds_prio[led_chunk[expected_sensors[i]][j]][k] = leds_prio[led_chunk[expected_sensors[i]][j]][k+1]; 
         }
-        }
+        leds[led_chunk[expected_sensors[i]][j]] = leds_prio[led_chunk[expected_sensors[i]][j]][0];             
+      }                                                    // assigns the highest priority color to each LED (the value can also be 0 -> the LED turns off)
+      vehicles[i].lastPosUpdate(expected_sensors[i]);
+      expected_sensors[i] = vehicles[i].getNextPos();
+      if(vehicles[i].getNextPos() == -1) {
+        vehicles[i].reset();
+        //Serial.println("veicolo arrivato al posto");
       }
       
     }
-  } // polling end
+  }                                                        // strip polling end
+  for(unsigned int i = 0; i < MAX_PRES; i++) {             // presence sensors polling
+    sensors[presence_sensors[i]].sense();
+    if(sensors[presence_sensors[i]].isSwitched()) {
+      // send a mqtt message to the broker
+    }
+  }                                                        // presence polling end
+  for(unsigned int i = 0; i < MAX_SIDES; i++) {            // parking sensors polling
+    sensors[parking_sensors[i]].sense();
+    if(sensors[parking_sensors[i]].isCrossed()) {
+      tone(BUZZER_PIN, FREQUENCY, DURATION);
+    }
+  }                                                        // parking polling end
+  sensors[exit_sensor].sense();
+  if(sensors[exit_sensor].isCrossed()) {
+    // send a mqtt message to the broker
+  }
+  
   // write a loop to light up LEDs for each active Vehicle object
+  FastLED.show(); // update the LED strip
 }
