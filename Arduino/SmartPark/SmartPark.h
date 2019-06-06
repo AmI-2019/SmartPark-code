@@ -64,7 +64,7 @@ class Vehicle
 };
 
 
-
+int sensor_to_spot(int sensor);
 int getlen(vec array);
 
 #endif

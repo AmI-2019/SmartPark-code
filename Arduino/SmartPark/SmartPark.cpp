@@ -18,6 +18,7 @@ Sensor::Sensor()
 }
 void Sensor::sense()
 {
+	_lastState = _isCrossed;
  	_analogValue = analogRead(_pin);
 	if(_crossCheck(_analogValue))
 	{
@@ -59,6 +60,17 @@ bool Sensor::isCrossed()
 int Sensor::getPin()
 {
 	return _pin;
+}
+int sensor_to_spot(int sensor)
+{
+	if(sensor == 6)
+	{
+		return 0;
+	} else if(sensor == 7)
+	{
+		return 7;
+	}
+	return -1;
 }
 
 

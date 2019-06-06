@@ -29,6 +29,7 @@ int led_chunk[SENS_NUM][MAX_STRIP];               // this matrix assigns each LE
 int presence_sensors[MAX_PRES];
 int parking_sensors[MAX_SIDES];
 const int exit_sensor;
+
 void callback(char* topic, byte* payload, unsigned int length) { // a function called when a MQTT message is received
   const int len = length;
   char *tokenIndex;
@@ -93,12 +94,12 @@ YunClient yun;
 PubSubClient client(yun);                          // clients needed for MQTT communication
 
 void reconnect() {
-  while (!client.connected()) {                           // Loop until we're reconnected
+  while (!client.connected()) {                           // loop until we're reconnected
     Serial.print("Attempting MQTT connection...");
-    if (client.connect("arduinoClient")) {                // Attempt to connect
+    if (client.connect("arduinoClient")) {                // attempt to connect
       Serial.println("connected");                        
-      client.publish("outTopic","yun connection test");   // Once connected, publish an announcement...
-      client.subscribe("test_yun");                       // ... and resubscribe
+      client.publish("outTopic","yun connection test");   // once connected, publish an announcement...
+      client.subscribe("strip/LED");                      // ... and resubscribe
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -156,7 +157,18 @@ if (!client.connected()) {
   for(unsigned int i = 0; i < MAX_PRES; i++) {             // presence sensors polling
     sensors[presence_sensors[i]].sense();
     if(sensors[presence_sensors[i]].isSwitched()) {
-      // send a mqtt message to the broker
+      char tbuf[MAX_MEX_SIZE];
+      char mbuf[MAX_MEX_SIZE];
+      int mex;
+      String topic = "storey/spot/" + String(sensor_to_spot(presence_sensors[i]));
+      if(sensors[presence_sensors[i]].getState()) {
+        mex = 0;
+      } else {
+        mex = 1;
+      }
+      char message = char(mex);
+      topic.toCharArray(tbuf,MAX_MEX_SIZE);
+      client.publish(tbuf,message);
     }
   }                                                        // presence polling end
   for(unsigned int i = 0; i < MAX_SIDES; i++) {            // parking sensors polling
@@ -167,9 +179,7 @@ if (!client.connected()) {
   }                                                        // parking polling end
   sensors[exit_sensor].sense();
   if(sensors[exit_sensor].isCrossed()) {
-    // send a mqtt message to the broker
+    client.publish("storey/exit","AmI is awesome");
   }
-  
-  // write a loop to light up LEDs for each active Vehicle object
   FastLED.show(); // update the LED strip
 }
