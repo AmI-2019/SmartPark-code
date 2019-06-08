@@ -82,6 +82,8 @@ def choice():
     
     # if the assistance is not needed, no input is required.
     if prompt is None:
+        if DBG:
+            print("Car park not overloaded, not suggesting anything")
         return redirect(url_for("transparent"));
     
     num = prompt.nSpots
@@ -135,9 +137,16 @@ It's used when no suggestion is needed.
 """
 @app.route("/transparent")
 def transparent():
-    #Only to signal the arrival of the user.
+    if DBG:
+        print(debugPrefix, "transparent")
+        print("Registering choice -1 for this user")
 
     arrival.addChoice(-1)
+
+    if DBG:
+        print(debugPrefix, "transparent ENDING")
+        print("")
+
     return render_template("transparent.html")
 
 """
@@ -148,19 +157,20 @@ then redirects to the idle page
 """
 @app.route("/accept", methods=["POST"])
 def accept():
-
     #Call to the function arrival.addChoice in the final version
     #A print of the chosen element fot debugging purposes
     spot_chosen = int(request.form["spot"])
+    if DBG:
+        print(debugPrefix, "accept")
+        print("User picker spot number ", spot_chosen)
 
     #DEBUG:
     # print(spot_chosen)
     #/DEBUG
 
     arrival.addChoice(spot_chosen)
+
     if DBG:
-        print(debugPrefix, "accept")
-        print("User picked spot number ", spot_chosen)
         print("Redirecting to idle")
         print(debugPrefix, "accept ENDING")
         print("")
