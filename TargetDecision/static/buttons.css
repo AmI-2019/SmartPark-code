@@ -35,32 +35,35 @@ body.idle {
 
 #welcome {
     text-align: center;
+    font-size: 36px;
 }
 
 #content {
     margin: auto;
-    width: 50%;
+    font-size: 20px;
+    width: 60%;
 }
 
 button#idle {
-    height: 120px;
-    width: 350px;
+    height: 100px;
+    width: 50%;
     font-size: 24px;
-    border-radius: 70px;
+    border: none;
+    border-radius: 10px;
     background-color: rgba(255,138,20, 0.7);
-    border: 3px solid rgba(255,138,20, 1);
+    border-bottom: 3px solid rgba(255,138,20, 1);
     position: absolute;
-    top: 521px;
-    left: 127px;
+    left: 25%;
+    top: 530px;
 }
 
 /*Text in the "transparent" page*/
 #transparent_text {
     margin: auto;
-    width: 50%;
-    font-size: 22px;
+    width: 60%;
+    font-size: 26px;
     text-align: center;
-    padding-top: 350px;
+    padding-top: 400px;
 }
 
 /*Text in the choice page*/
@@ -76,7 +79,6 @@ button#idle {
 }
 
 #message {
-    padding-top: 30px;
     text-align: center;
 }
 
@@ -100,14 +102,14 @@ button {
 .class_2 {
     background: green;
     animation-name: flash;
-	animation-duration: 3s;
+	animation-duration: 2.5s;
 	animation-timing-function: linear;
 	animation-iteration-count: infinite;
 }
 
 @keyframes flash {
     0% { background: green; }
-    50% { background: #083b66; }
+    50% { background: #0c0; }
     100% { background: green; }
 }
 

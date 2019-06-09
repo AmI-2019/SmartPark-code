@@ -13,8 +13,11 @@
     <h1 id="welcome">Welcome, {{ user }}</h1>
     <div id="content">
         <span id="free">Free spots: {{ free }}</span>
-        <span id="circulating">Circulating cars: {{ circulating }}</span>
-        <p id="message">Choose one of the selected spots:</p>
+        <span id="circulating">Circulating cars: {{ circulating }}</span><br>
+        <p id="message">
+            Choose one of the selected spots:
+            Lorem ipsum dolor sit
+        </p>
     </div>
 
     <form action="{{ url_for('accept') }}" method="post">
