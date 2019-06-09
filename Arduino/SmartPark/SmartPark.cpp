@@ -6,7 +6,7 @@ Sensor::Sensor(int pin)
 	_pin = pin;
 	_analogValue = 0;
 	_isCrossed = false;
-	_threshold = 500;
+	_threshold = 300;
 }
 Sensor::Sensor() 
 {
@@ -18,16 +18,27 @@ Sensor::Sensor()
 }
 void Sensor::sense()
 {
-	_lastState = _isCrossed;
+	
  	_analogValue = analogRead(_pin);
 	if(_crossCheck(_analogValue))
 	{
 		_isCrossed = true;
+		
+		if (_lastState)
+		{
+			_isCrossed = false;
+		} else
+		{
+			_lastState = _isCrossed;
+		}
 	}
 	else
 	{
 		_isCrossed = false;
+		_lastState = _isCrossed;
 	}
+	
+	
 }
 void Sensor::stateChange()
 {
@@ -47,7 +58,7 @@ bool Sensor::isSwitched()
 }
 bool Sensor::_crossCheck(int value)
 {
-	if (value < _threshold)
+	if (value > _threshold)
 	{
 		return true;
 	}

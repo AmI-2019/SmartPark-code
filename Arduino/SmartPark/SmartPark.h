@@ -1,6 +1,7 @@
 #ifndef SmartPark_h
 #define SmartPark_h
-#define SENS_NUM 12
+#define SENS_NUM 5
+#define MAX_STRIP 5
 typedef struct 
 {
 	int v[SENS_NUM];
@@ -17,6 +18,7 @@ class Sensor
 		void stateChange();
 		bool getState();
 		bool isSwitched();
+		int assignedLeds[MAX_STRIP];
 	private:
 		bool _crossCheck(int value);
 		int _pin;
