@@ -58,15 +58,18 @@ def getUserFromPlate(plate: str):
         print("")
 
     resp = requests.get("http://localhost:" + str(UM_TDport) + UM_TD_APIprefix + plate)
+
     # JSON is decoded into a list
     asList = resp.json()
+    if asList == -1:
+        asList = ["Person", -1]
 
     if DBG:
         print("User (asList) = ", asList)
         print(debugPrefix, "getUserFromPlate ENDING")
         print("")
 
-    return User(asList[0], int(asList[1]))
+    return User(username=asList[0], preference=int(asList[1]))
 
 
 """
@@ -77,10 +80,13 @@ Simply filters free spots according to whether their properties include the user
 def getPromptFromUser(user: User):
     if DBG:
         print(debugPrefix, "getPromptFromUser")
-        print("Going to compute list of suggestions for user ", user)
+        print("Going to compute list of suggestions for user ", user.username)
         print("")
 
     if spots.isTransparent():
+        if DBG:
+            print("Transparency: returning None ")
+            print("")
         return None
 
     freeSpots = spots.getFreeSpots()
@@ -109,11 +115,16 @@ def handleEntranceArrival(plate: str):
 
     if DBG:
         print(debugPrefix, "handleEntranceArrival")
-        print("Plate ", plate, "arrived at the entrance, going to compute Prompt")
+        print("Plate ", plate, "arrived at the entrance, going to retrieve user preference")
         print("")
 
     user = getUserFromPlate(plate)
     lastPlate = plate
+
+    if DBG:
+        print("Going to compute prompt")
+        print("")
+
     nextPrompt = getPromptFromUser(user)
 
     if DBG:

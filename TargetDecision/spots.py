@@ -147,14 +147,16 @@ def getFreeSpots():
 
 
 def isTransparent():
+    res = storey.free - storey.circulating >= storey.thresh
     if DBG:
         print(debugPrefix, "isTransparent")
         print("Deciding whether or not to be transparent")
         print("free = ", storey.free, ", circulating = ", storey.circulating, ", thresh = ", storey.thresh)
+        print("Returning ", res)
         print(debugPrefix, "isTransparent ENDING")
         print("")
 
-    return storey.free - storey.circulating >= storey.thresh
+    return res
 
 
 """
