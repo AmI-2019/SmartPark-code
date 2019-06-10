@@ -76,7 +76,6 @@ def choice():
     # 0 -> free
     # 1 -> taken
     # 2 -> suggested
-    """
     prompt: arrival.UserPrompt = arrival.nextPrompt
     
     # if the assistance is not needed, no input is required.
@@ -101,6 +100,7 @@ def choice():
     for suggested_spot in prompt.suggestions:
         state[suggested_spot.ID] = 2
 
+    """
     # DEBUG
     # return redirect(url_for("transparent"))
     num=8
@@ -109,6 +109,7 @@ def choice():
     free=5
     circulating=2
     #/DEBUG
+    """
 
     audio_name = "audio_file_" + user + ".mp3"
 
