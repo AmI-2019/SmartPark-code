@@ -9,14 +9,13 @@
     <h1>Login</h1>
 
     <form id="login-form" action="{{ url_for('login_control') }}" method="POST">
-        <p>Username:
-            <input type="text" name = "username" autocomplete="off">
-        </p>
-        <p>Password:
-            <input type="password" name = "password">
-        </p>
 
-        <input type="submit" value="Enter">
+        <input type="text" name = "username" autocomplete="off" placeholder="Username:">
+        <br>
+        <input type="password" name = "password" placeholder="Password:">
+        <br>
+
+        <input type="submit" class="button button-enter" value="Enter">
     </form>
 
     <!--
@@ -27,14 +26,14 @@
     -->
 
     {% if flag == 1 %}
-        <p>Error: Invalid username</p>
+        <p class="error">Error: Invalid username</p>
     {% endif %}
     {% if flag == 2 %}
-        <p>Error: Invalid password</p>
+        <p class="error">Error: Invalid password</p>
     {% endif %}
 
     <form action = "{{ url_for('index') }}">
-        <input type = "submit" value = "Return to the home page" />
+        <input type = "submit" class="button button-return" value = "Return to the home page" />
     </form>
 
 </body>

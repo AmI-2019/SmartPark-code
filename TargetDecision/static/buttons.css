@@ -1,4 +1,8 @@
 /*
+
+SmartPark blue:   #083b66 rgb(8,59,102)
+SmartPark orange: #ff8a14 rgb(255,138,20)
+
 This file handles the style of the buttons:
 
  it disables the occupied spots and highlights the suggested ones.
@@ -10,24 +14,129 @@ This file handles the style of the buttons:
     # 0 -> free
     # 1 -> taken
     # 2 -> suggested
- */
+*/
+
+/*Sets the background to the choice page*/
+
+body {
+	margin: 0px;
+	font-family: "Open Sans", Sans-serif;
+}
+
+body.choice {
+  background-image: url("background_choice.jpg");
+  background-repeat: no-repeat;
+}
+
+body.idle {
+  background-image: url("background_idle.jpg");
+  background-repeat: no-repeat;
+}
+
+#welcome {
+    text-align: center;
+    font-size: 36px;
+}
+
+#content {
+    margin: auto;
+    font-size: 20px;
+    width: 60%;
+}
+
+button#idle {
+    height: 100px;
+    width: 50%;
+    font-size: 24px;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255,138,20, 0.7);
+    border-bottom: 3px solid rgba(255,138,20, 1);
+    position: absolute;
+    left: 25%;
+    top: 530px;
+}
+
+/*Text in the "transparent" page*/
+#transparent_text {
+    margin: auto;
+    width: 60%;
+    font-size: 26px;
+    text-align: center;
+    padding-top: 400px;
+}
+
+/*Text in the choice page*/
+#free {
+    float: left;
+    width: 50%;
+}
+
+#circulating {
+    float: right;
+    text-align: right;
+    width: 50%;
+}
+
+#message {
+    text-align: center;
+}
 
 button {
-    height: 30px;
-    width: 50px;
+    outline:none;
+    height: 70px;
+    width: 100px;
 }
 
 .class_0 {
     background: green;
-    opacity: 0.7;
 }
 
 .class_1 {
     background: red;
-    opacity: 0.3;
     pointer-events: none;
 }
 
-.class_2{
-    background: gold;
+/*Handling flash animation*/
+
+.class_2 {
+    background: green;
+    animation-name: flash;
+	animation-duration: 2.5s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+}
+
+@keyframes flash {
+    0% { background: green; }
+    50% { background: #0c0; }
+    100% { background: green; }
+}
+
+/*Horizontal position*/
+#id_0, #id_1, #id_2, #id_3 {
+    position: absolute;
+    left: 75px;
+}
+
+#id_4, #id_5, #id_6, #id_7 {
+    position: absolute;
+    right: 75px;
+}
+
+/*Vertical position*/
+#id_3, #id_7 {
+    top: 235px;
+}
+
+#id_2, #id_6 {
+    top: 365px;
+}
+
+#id_1, #id_5 {
+    top: 555px;
+}
+
+#id_0, #id_4 {
+    top: 685px;
 }
