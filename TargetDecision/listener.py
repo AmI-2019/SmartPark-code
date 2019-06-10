@@ -42,6 +42,7 @@ def on_connect(client, userdata, flags, rc):
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe(occupationTopic)
+    client.subscribe(debugOccupationTopic)
     client.subscribe(entranceArrivalTopic)
     client.subscribe(storeyArrivalTopic)
     client.subscribe(storeyExitTopic)
@@ -92,17 +93,21 @@ This event is handled by the 'spots' module.
 """
 def handleDebugOccupation(client, userdata, msg):
     topics = msg.topic.split("/")
-    spotID = topics[3]
+    spotID = int(topics[3])
     # The payload needs to be decoded from binary to str, then converted to int
     occupiedAsInt = int(msg.payload.decode())
     if DBG:
         print(debugPrefix, "handleDebugOccupation")
         print("Topics = ", topics, " occupiedAsInt = ", occupiedAsInt)
         print("Going to call spots.handleDebugOccupation")
-        print("\n")
+        print("")
 
     # The second argument must be a bool
     spots.handleDebugOccupation(spotID, occupiedAsInt == 1)
+
+    if DBG:
+        print(debugPrefix, "handleDebugOccupation ENDING")
+        print("")
 
 
 """
@@ -198,6 +203,7 @@ def main():
 
     client.on_connect = on_connect
     client.message_callback_add(sub=occupationTopic, callback=handleOccupation)
+    client.message_callback_add(sub=debugOccupationTopic, callback=handleDebugOccupation)
     client.message_callback_add(sub=entranceArrivalTopic, callback=handleEntranceArrival)
     client.message_callback_add(sub=storeyArrivalTopic, callback=handleStoreyArrival)
     client.message_callback_add(sub=storeyExitTopic, callback=handleStoreyExit)

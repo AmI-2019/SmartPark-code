@@ -56,12 +56,18 @@ Called by 'listener.handleOccupation()'
 Updates 'occupied', 'free', and 'circulating'
 """
 def handleOccupation(ID: int, occupied: bool):
-    storey.spots[ID].occupied = occupied
     if DBG:
         print(debugPrefix, "handleOccupation")
         print("Affected spot number ", ID, ", occupied = ", occupied)
         print("")
 
+    if occupied == storey.spots[ID].occupied:
+        if DBG:
+            print("No news, good news. Going to return")
+            print("")
+        return
+
+    storey.spots[ID].occupied = occupied
     if occupied:
         storey.free -= 1
         # When a car parks, it no longer is circulating
@@ -88,24 +94,30 @@ Called by 'listener.handleDebugOccupation()'
 Only updates 'occupied' and 'free'
 """
 def handleDebugOccupation(ID: int, occupied: bool):
-    storey.spots[ID].occupied = occupied
     if DBG:
         print(debugPrefix, "handleDebugOccupation")
         print("Affected spot number ", ID, ", occupied = ", occupied)
         print("")
 
+    if occupied == storey.spots[ID].occupied:
+        if DBG:
+            print("No news, good news. Going to return")
+            print("")
+        return
+
+    storey.spots[ID].occupied = occupied
     if occupied:
         storey.free -= 1
         if DBG:
             print("Spot number ", ID, " is now occupied, only free spots have decreased")
             print("free = ", storey.free, ", circulating = ", storey.circulating)
-            print("\n")
+            print("")
     else:
         storey.free += 1
         if DBG:
             print("Spot number ", ID, " is now free, only free spots have increased")
             print("free = ", storey.free, ", circulating = ", storey.circulating)
-            print("\n")
+            print("")
 
 
 """
