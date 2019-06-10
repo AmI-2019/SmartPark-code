@@ -21,30 +21,28 @@ TD_TSport: int
 
 """
 The base route, loaded at boot.
-Just redirects to the idle page.
+Should just redirect to the idle page.
 """
 @app.route("/")
 def start():
     if DBG:
         print(debugPrefix, "start")
         print("Requested base route, redirecting to idle")
-        print(debugPrefix, "start ENDING")
-        print("")
+        print("\n")
 
     return redirect(url_for("idle"))
 
 
 """
 The idle page.
-Links to the choice page.
+Should include a link to the choice page.
 """
 @app.route("/idle")
 def idle():
     if DBG:
         print(debugPrefix, "idle")
         print("Requested idle, returning idle.html")
-        print(debugPrefix, "idle ENDING")
-        print("")
+        print("\n")
 
     return render_template("idle.html")
 
@@ -52,8 +50,8 @@ def idle():
 """
 The choice page. 
 
-Return (to the Touch-Screen) a visual rendering of arrival.nextPrompt.
-Includes a form for POSTing data to the accept route
+Should return (to the Touch-Screen) a JSON version of arrival.nextPrompt.
+Should include a form for POSTing data to the accept route
 """
 @app.route("/choice")
 def choice():
@@ -78,12 +76,11 @@ def choice():
     # 0 -> free
     # 1 -> taken
     # 2 -> suggested
+    """
     prompt: arrival.UserPrompt = arrival.nextPrompt
     
     # if the assistance is not needed, no input is required.
     if prompt is None:
-        if DBG:
-            print("Car park not overloaded, not suggesting anything")
         return redirect(url_for("transparent"));
     
     num = prompt.nSpots
@@ -104,16 +101,14 @@ def choice():
     for suggested_spot in prompt.suggestions:
         state[suggested_spot.ID] = 2
 
-    """
     # DEBUG
-    return redirect(url_for("transparent"));
+    # return redirect(url_for("transparent"))
     num=8
     user = "Andrea"
     state=[1,0,1,2,2,0,2,1]
     free=5
     circulating=2
     #/DEBUG
-    """
 
     audio_name = "audio_file_" + user + ".mp3"
 
@@ -125,8 +120,7 @@ def choice():
     if DBG:
         print("user = ", user, ", nSpots = ", num, ", spots state = ", state, ", number of free spots = ",
               free, ", number of circulating cars = ", circulating)
-        print(debugPrefix, "choice ENDING")
-        print("")
+        print("\n")
 
     return render_template("choice.html", user=user, num=num, state=state, free=free, circulating=circulating, audio_name=audio_name)
 
@@ -137,51 +131,38 @@ It's used when no suggestion is needed.
 """
 @app.route("/transparent")
 def transparent():
-    if DBG:
-        print(debugPrefix, "transparent")
-        print("Registering choice -1 for this user")
+    #Only to signal the arrival of the user.
 
     arrival.addChoice(-1)
-
-    if DBG:
-        print(debugPrefix, "transparent ENDING")
-        print("")
-
     return render_template("transparent.html")
 
 """
 The accept route.
 
-Simply passes the payload (user's choice), as an int, to arrival.addChoice(),
-then redirects to the idle page
+Should only pass the payload (user's choice), as an int, to arrival.addChoice(),
+then redirect to the idle page
 """
 @app.route("/accept", methods=["POST"])
 def accept():
+
     #Call to the function arrival.addChoice in the final version
     #A print of the chosen element fot debugging purposes
     spot_chosen = int(request.form["spot"])
-    if DBG:
-        print(debugPrefix, "accept")
-        print("User picker spot number ", spot_chosen)
 
     #DEBUG:
     # print(spot_chosen)
     #/DEBUG
 
     arrival.addChoice(spot_chosen)
-
     if DBG:
+        print(debugPrefix, "accept")
+        print("User picked spot number ", spot_chosen)
         print("Redirecting to idle")
-        print(debugPrefix, "accept ENDING")
-        print("")
+        print("\n")
 
     return redirect(url_for("idle"))
 
 
-"""
-Manages the interaction to the Touch-Screen
-Needs to be called in a separate thread
-"""
 def main(port: int):
     global TD_TSport
 

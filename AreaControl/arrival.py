@@ -30,7 +30,7 @@ def getTargetFromPlate(plate: str):
         print("Requesting target spot for plate ", plate)
         print("")
 
-    resp = requests.get("http://localhost:" + str(TD_ACport) + TD_AC_APIprefix + plate)
+    resp = requests.get("localhost:" + str(TD_ACport) + TD_AC_APIprefix + plate)
     spotID = int(resp.text)
 
     if DBG:
@@ -52,6 +52,7 @@ def lightLEDs(spotID):
 
     payload = str(spotID) + LEDs[spotID]
     listener.client.publish(topic=LEDtopic, payload=payload)
+    listener.client.wait_for_publish()
 
     if DBG:
         print("Successfully published payload ", payload)
