@@ -18,7 +18,7 @@ TD_AC_APIprefix = "/target/"
 # Dependant on the storey layout
 # -1 is received by getTargetFromPlate() when transparent behaviour is required
 LEDs = {-1: "", 0: ",0,1", 7: ",0,2,3,4"}
-LEDtopic = "/strip/LED"
+LEDtopic = "strip/LED"
 
 
 """
@@ -50,9 +50,15 @@ def lightLEDs(spotID):
         print("Commanding to light up LEDs for spot ", spotID)
         print("")
 
-    payload = str(spotID) + LEDs[spotID]
+    if spotID in LEDs:
+        leds = LEDs[spotID]
+    else:
+        if DBG:
+            print("Leading to virtual spot")
+            print("")
+        leds = ""
+    payload = str(spotID) + leds
     listener.client.publish(topic=LEDtopic, payload=payload)
-    listener.client.wait_for_publish()
 
     if DBG:
         print("Successfully published payload ", payload)
