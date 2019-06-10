@@ -30,7 +30,7 @@ def getTargetFromPlate(plate: str):
         print("Requesting target spot for plate ", plate)
         print("")
 
-    resp = requests.get("localhost:" + str(TD_ACport) + TD_AC_APIprefix + plate)
+    resp = requests.get("http://localhost:" + str(TD_ACport) + TD_AC_APIprefix + plate)
     spotID = int(resp.text)
 
     if DBG:
