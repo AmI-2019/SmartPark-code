@@ -4,46 +4,25 @@
     <meta charset="UTF-8">
     <title>SmartPark</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body class="structure container">
 
     <h1>SmartPark profile manager</h1>
 
-    <!--
-    Flag:
-    0 -> user authenticated
-    1 -> user not authenticated
-    -->
+    <div class="column_left">
+        <form action = "{{ url_for('login') }}" method = "GET">
+            <input type="hidden" name="flag" value="0">
+            <input class="button button-index" type = "submit" value = "LOGIN" />
+        </form>
+    </div>
 
-    {% if flag == 1 %}
-        <div class="column_left">
-            <form action = "{{ url_for('login') }}" method = "GET">
-                <input type="hidden" name="flag" value="0">
-                <input class="button" type = "submit" value = "Login" />
-            </form>
-        </div>
+    <div class="column_right">
+        <form action = "{{ url_for('new_user') }}" method = "GET">
+            <input type="hidden" name="flag" value="0">
+            <input class="button button-index" type = "submit" value = "NEW USER" />
+        </form>
+    </div>
 
-        <div class="column_right">
-            <form action = "{{ url_for('new_user') }}" method = "GET">
-                <input type="hidden" name="flag" value="0">
-                <input class="button" type = "submit" value = "New user" />
-            </form>
-        </div>
-
-    {% else %}
-
-        <div class="column_left">
-            <form action = "{{ url_for('user_page') }}" method = "GET">
-                <input class="button" type = "submit" value = "Your page" />
-            </form>
-        </div>
-
-        <div class="column_right">
-            <form action = "{{ url_for('logout') }}" method = "GET">
-                <input class="button" type = "submit" value = "Logout" />
-            </form>
-        </div>
-
-    {% endif %}
 </body>
 </html>

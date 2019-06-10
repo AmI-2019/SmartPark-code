@@ -3,14 +3,20 @@ Css file to manage the graphical structure of the page.
 SmartPark blue:   #083b66 rgb(8,59,102)
 SmartPark orange: #ff8a14 rgb(255,138,20)
 */
+
+/*Applies the wallpaper to every page*/
+body {
+	font-family: "Open Sans", Sans-serif;
+    background-color: #ddd;
+}
+
 /*Rules for every page*/
 .structure {
-  background: rgba(8,59,102,0.3);
   text-align: center;
 }
 
 h1{
-    color: #ff8a14;
+    margin-top: 50px;
 }
 
 /*Set of classes to have two buttons next to each other*/
@@ -32,16 +38,78 @@ h1{
   margin-top: 150px;
 }
 
-/*Buttons in index.html*/
+/*Button style*/
 .button{
-    font-size: 32px;
+	font-family: "Open Sans", Sans-serif;
+    border: none;
+    border-radius: 10px;
+    background-color: rgba(255,138,20, 0.7);
+    border-bottom: 3px solid rgba(255,138,20, 1);
+}
+
+.button-index {
     height: 100px;
     width: 200px;
+    font-size: 24px;
+}
+
+.button-return {
+    position: absolute;
+    top: 75%;
+    left: 40%;
+
+    height: 50px;
+    width: 20%;
+    font-size: 18px;
+    background-color: rgba(8,59,102, 0.7);
+    border-bottom: 3px solid rgba(8,59,102, 1);
+}
+
+.button-enter {
+    height: 50px;
+    width: 100px;
+    font-size: 18px;
+}
+
+/*Input box style*/
+input {
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#preference {
+    text-align: left;
+}
+.container_2{
+	width: 183px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+/*Error messages*/
+.error{
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/*User preference shown in user_page.html*/
+#user-page-preference {
+    margin-top: 50px;
+}
+
+.user-page p{
+    font-size: 18px;
+}
+
+#actual-user-preference{
+    margin-top: 10px;
+    font-size: 24px;
+    font-weight: bold;
 }
 
 /*Login form in login.html*/
 #login-form{
-    margin-top: 65px;
     margin-bottom: 40px;
 }
 

@@ -18,17 +18,7 @@ def beginning():
 # Main page for the profiling website
 @app.route('/index')
 def index():
-    username = session.get("username", "")
-
-    # Flag:
-    # 0 -> user authenticated
-    # 1 -> user not authenticated
-
-    flag = 0
-    if (username == ""):
-        flag = 1
-
-    return render_template("index.html", flag=flag)
+    return render_template("index.html")
 
 
 # Page that allows a user to access to their profile:
@@ -118,10 +108,18 @@ def new_user_creation():
 # Personal page: given the username, it shows the relative page
 @app.route('/user_page')
 def user_page():
+    # Preferences list:
+    # 0 -> Near the entrance
+    # 1 -> Near the exit
+    # 2 -> Near the elevator
+
+    preference_list = ["Near the entrance", "Near the exit", "Near the elevator"]
     username = session["username"]
     result = backend.showUserFromUsername(username)
     plate = result[0]
-    preference = result[1]
+    preference_index=int(result[1])
+    print(preference_index)
+    preference = preference_list[preference_index]
     plate_with_spaces = plate[0:2]+" "+plate[2:7]
 
     return render_template("user_page.html", username=username, plate=plate_with_spaces, preference=preference)

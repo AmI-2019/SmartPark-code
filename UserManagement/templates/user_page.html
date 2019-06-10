@@ -5,7 +5,7 @@
     <title>User page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="structure">
+<body class="structure user-page">
     <h1>Welcome, {{ username }}</h1>
 
     <p>Plate number:</p>
@@ -15,16 +15,12 @@
         <img src="{{ url_for('static', filename='plate.jpg') }}">
     </div>
 
-    <p>Preference: {{ preference }}</p>
+    <p id="user-page-preference">Preference:<br><div id="actual-user-preference">{{ preference }}</div></p>
     <br>
-
-    <form action = "{{ url_for('index') }}">
-        <input type = "submit" value = "Return to the home page" />
-    </form>
 
 
     <form action = "{{ url_for('logout') }}">
-        <input type = "submit" value = "Logout" />
+        <input type = "submit" class="button button-return" value = "Logout" />
     </form>
 
 </body>
