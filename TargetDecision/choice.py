@@ -103,7 +103,6 @@ def choice():
     # marking the suggested spots
     for suggested_spot in prompt.suggestions:
         state[suggested_spot.ID] = 2
-    """
 
     """
     # DEBUG
