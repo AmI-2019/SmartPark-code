@@ -21,30 +21,28 @@ TD_TSport: int
 
 """
 The base route, loaded at boot.
-Just redirects to the idle page.
+Should just redirect to the idle page.
 """
 @app.route("/")
 def start():
     if DBG:
         print(debugPrefix, "start")
         print("Requested base route, redirecting to idle")
-        print(debugPrefix, "start ENDING")
-        print("")
+        print("\n")
 
     return redirect(url_for("idle"))
 
 
 """
 The idle page.
-Links to the choice page.
+Should include a link to the choice page.
 """
 @app.route("/idle")
 def idle():
     if DBG:
         print(debugPrefix, "idle")
         print("Requested idle, returning idle.html")
-        print(debugPrefix, "idle ENDING")
-        print("")
+        print("\n")
 
     return render_template("idle.html")
 
@@ -52,8 +50,8 @@ def idle():
 """
 The choice page. 
 
-Return (to the Touch-Screen) a visual rendering of arrival.nextPrompt.
-Includes a form for POSTing data to the accept route
+Should return (to the Touch-Screen) a JSON version of arrival.nextPrompt.
+Should include a form for POSTing data to the accept route
 """
 @app.route("/choice")
 def choice():
@@ -105,7 +103,7 @@ def choice():
     """
 
     # DEBUG
-    return redirect(url_for("transparent"));
+    return redirect(url_for("transparent"))
     num=8
     user = "Andrea"
     state=[1,0,1,2,2,0,2,1]
@@ -123,8 +121,7 @@ def choice():
     if DBG:
         print("user = ", user, ", nSpots = ", num, ", spots state = ", state, ", number of free spots = ",
               free, ", number of circulating cars = ", circulating)
-        print(debugPrefix, "choice ENDING")
-        print("")
+        print("\n")
 
     return render_template("choice.html", user=user, num=num, state=state, free=free, circulating=circulating, audio_name=audio_name)
 
@@ -143,8 +140,8 @@ def transparent():
 """
 The accept route.
 
-Simply passes the payload (user's choice), as an int, to arrival.addChoice(),
-then redirects to the idle page
+Should only pass the payload (user's choice), as an int, to arrival.addChoice(),
+then redirect to the idle page
 """
 @app.route("/accept", methods=["POST"])
 def accept():
@@ -162,16 +159,11 @@ def accept():
         print(debugPrefix, "accept")
         print("User picked spot number ", spot_chosen)
         print("Redirecting to idle")
-        print(debugPrefix, "accept ENDING")
-        print("")
+        print("\n")
 
     return redirect(url_for("idle"))
 
 
-"""
-Manages the interaction to the Touch-Screen
-Needs to be called in a separate thread
-"""
 def main(port: int):
     global TD_TSport
 
