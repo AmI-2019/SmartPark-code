@@ -83,6 +83,32 @@ def handleOccupation(ID: int, occupied: bool):
 
 
 """
+Called by 'listener.handleDebugOccupation()'
+
+Only updates 'occupied' and 'free'
+"""
+def handleDebugOccupation(ID: int, occupied: bool):
+    storey.spots[ID].occupied = occupied
+    if DBG:
+        print(debugPrefix, "handleDebugOccupation")
+        print("Affected spot number ", ID, ", occupied = ", occupied)
+        print("")
+
+    if occupied:
+        storey.free -= 1
+        if DBG:
+            print("Spot number ", ID, " is now occupied, only free spots have decreased")
+            print("free = ", storey.free, ", circulating = ", storey.circulating)
+            print("\n")
+    else:
+        storey.free += 1
+        if DBG:
+            print("Spot number ", ID, " is now free, only free spots have increased")
+            print("free = ", storey.free, ", circulating = ", storey.circulating)
+            print("\n")
+
+
+"""
 Called by 'listener.handleStoreyArrival()'
 
 Updates 'circulating'

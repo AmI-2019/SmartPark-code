@@ -22,6 +22,7 @@ debugPrefix = "LISTENER: "
 brokerHost = "localhost"
 clientID = "TargetDecision"
 occupationTopic = "storey/spot/+"
+debugOccupationTopic = "DBG/storey/spot/+"
 entranceArrivalTopic = "entrance/plate"
 storeyArrivalTopic = "storey/plate"
 storeyExitTopic = "storey/exit"
@@ -78,6 +79,30 @@ def handleOccupation(client, userdata, msg):
     if DBG:
         print(debugPrefix, "handleOccupation ENDING")
         print("")
+
+
+"""
+The callback for when a spot gets manually occupied or freed.
+
+The message is structured as follows:
+    Topic = 'DBG/storey/spot/<spotID>'
+    Payload = occupation (0 | 1)
+
+This event is handled by the 'spots' module.
+"""
+def handleDebugOccupation(client, userdata, msg):
+    topics = msg.topic.split("/")
+    spotID = topics[3]
+    # The payload needs to be decoded from binary to str, then converted to int
+    occupiedAsInt = int(msg.payload.decode())
+    if DBG:
+        print(debugPrefix, "handleDebugOccupation")
+        print("Topics = ", topics, " occupiedAsInt = ", occupiedAsInt)
+        print("Going to call spots.handleDebugOccupation")
+        print("\n")
+
+    # The second argument must be a bool
+    spots.handleDebugOccupation(spotID, occupiedAsInt == 1)
 
 
 """
