@@ -136,6 +136,14 @@ def transparent():
 
     arrival.addChoice(-1)
     return render_template("transparent.html")
+"""
+The confirmation page.
+
+It's used to signal that the choice has been registered.
+"""
+@app.route("/choice_redirection")
+def choice_redirection():
+    return render_template("choice_redirection.html")
 
 """
 The accept route.
@@ -161,8 +169,7 @@ def accept():
         print("Redirecting to idle")
         print("\n")
 
-    return redirect(url_for("idle"))
-
+    return redirect(url_for("choice_redirection"))
 
 def main(port: int):
     global TD_TSport

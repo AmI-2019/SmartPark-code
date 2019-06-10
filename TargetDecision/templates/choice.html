@@ -7,7 +7,7 @@
      content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0'
     />
     <title>Choice</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='buttons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="choice">
     <h1 id="welcome">Welcome, {{ user }}</h1>
@@ -20,15 +20,15 @@
         </p>
     </div>
 
-    <form action="{{ url_for('accept') }}" method="post">
+    <form id="choice_form" action="{{ url_for('accept') }}" method="post">
         {% for i in range(0, num) %}
-            <button type="submit" class="choice_button class_{{ state[i] }}" id="id_{{ i }}" name="spot" value="{{ i }}"></button>
+            <button type="submit" class="class_{{ state[i] }}" id="id_{{ i }}" name="spot" value="{{ i }}"></button>
         {% endfor %}
     </form>
 
     <audio src="{{ url_for('static', filename=audio_name)}}" hidden autoplay></audio>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="static/pop_up.js"></script>
+    <script src="static/redirecting.js"></script>
 </body>
 </html>
