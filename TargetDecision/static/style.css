@@ -140,3 +140,18 @@ button {
 #id_0, #id_4 {
     top: 685px;
 }
+
+/*Pop-up handling*/
+ #confirm {
+    display: none;
+    background-color: #514E61;
+    color: #FFFFFF;
+    border: 1px solid #aaa;
+    position: fixed;
+    width: 250px;
+    left: 50%;
+    margin-left: -100px;
+    padding: 6px 8px 8px;
+    box-sizing: border-box;
+    text-align: center;
+ }
