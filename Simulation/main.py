@@ -57,11 +57,13 @@ Continuously asks for a topic, then reads the plate from the camera and publishe
 """
 def menu():
     while True:
-        sim = input("What simulation (arrival/occupation/exit)?\n")
+        sim = input("What simulation (arrival/occupation/selective/exit)?\n")
         if sim == "arrival":
             simulations.arrival()
         elif sim == "occupation":
             simulations.occupation()
+        elif sim == "selective":
+            simulations.selective()
         elif sim == "exit":
             simulations.getout()
         else:
