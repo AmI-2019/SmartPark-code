@@ -12,21 +12,24 @@
 #define LED_PIN 3                      // the digital pin the LED strip is connected to
 #define MAX_PRES 2                     // the amount of presence sensors in the setup
 #define MAX_SIDES 4                    // the amount of parking assistance sensors in the setup
-#define NUM_LEDS 30                    // the total amount of LEDs in the setup
+#define NUM_LEDS 56                   // the total amount of LEDs in the setup
 #define LED_TYPE WS2812B               // the LED strip type
 #define COLOR_ORDER GRB                // the LED strip color order
 #define MAX_MEX_SIZE 50                // the maximum number of bytes for the MQTT message
 #define PORT 1883                      // the MQTT server port
-#define MAX_ROAMING 3                  // the maximum number of vehicles that can move within the floor simultaneously
+#define MAX_ROAMING 2                  // the maximum number of vehicles that can move within the floor simultaneously
 
 CRGB leds[NUM_LEDS];                       // an array to store the LEDs colors
-CRGB leds_prio[NUM_LEDS][MAX_ROAMING+1];   // a matrix to manage the LEDs color priority
+CRGB leds_prio[NUM_LEDS][MAX_ROAMING];   // a matrix to manage the LEDs color priority
 CRGB assignedCol[MAX_ROAMING];             // an array that allows for a static assignment of a color for each Vehicle object
 CRGB off = CRGB::Black;                    
 
+const char presence_topic[] = "storey/spot";
+const char exit_topic[] = "storey/exit";
+const char led_topic[] = "strip/LED"; 
 Sensor sensors[SENS_NUM];                  // an array of Sensor objects for optimal management of the IR sensors. The SENS_NUM constant equals the total number of physical sensors in the setup
 Vehicle vehicles[MAX_ROAMING];             // an array of Vehicle objects to manage all the vehicles that are moving along the way to their spot simultaneously
-Sequence seq;                              // an object to store the sequence sent by the MQTT broker
+
 
 int8_t expected_sensors[MAX_ROAMING];      // an array to constantly keep track of which road sensors the system has to poll
 uint8_t presence_sensors[MAX_PRES];        // an array to store the index of spot presence sensors
@@ -89,7 +92,7 @@ void callback(char* topic, byte* payload, unsigned int length)   // a function t
 	{
 		input_vec.v[i] = input[i+1];
 	}
-  
+  Sequence seq;
 	seq.setLen(sensnum);                                           // storing the vec structure into a Sequence object
 	seq.fill(input_vec);
   
@@ -98,7 +101,6 @@ void callback(char* topic, byte* payload, unsigned int length)   // a function t
 		if(vehicles[i].isFree()) 
 		{
 			vehicles[i].assignFromSeq(seq);                            // storing the sequence of sensors and the assigned spot into the Vehicle object
-			vehicles[i].updateSpot(assignedSpot);
 			Console.print("Assigned Vehicle: ");                       // DEBUG prints
 			Console.print(i);
 			Console.print(" color: ");
@@ -147,7 +149,7 @@ void reconnect()                                         // this function is cal
 		{               
 			Console.println("connected");                        
 			client.publish("arduino","yun connection test");   // once connected, the system publishes an announcement
-			client.subscribe("strip/LED");                     // the system (re)subscribes to the strip/LED topic
+			client.subscribe(led_topic);                     // the system (re)subscribes to the strip/LED topic
 		} else 
 		{
 			Console.print("failed, rc=");                      // if the connection attempt fails, retry every 5 seconds
@@ -160,39 +162,44 @@ void reconnect()                                         // this function is cal
 
 void staticAssignment()                                  // this function hosts a mandatory list of static assignments of values; strictly demo-dependent
 {
-	sensors[0].assignedLeds[0] = 1;                        // manually assigning each LED to a sensor
-	sensors[0].assignedLeds[1] = 2;
-	sensors[0].assignedLeds[2] = 3;
-	sensors[1].assignedLeds[0] = 4;
-	sensors[1].assignedLeds[1] = 5;
-	sensors[1].assignedLeds[2] = 6;
-	sensors[2].assignedLeds[0] = 7;
-	sensors[2].assignedLeds[1] = 8;
-	sensors[2].assignedLeds[2] = 9;
-	sensors[3].assignedLeds[0] = 10;
-	sensors[3].assignedLeds[1] = 11;
-	sensors[3].assignedLeds[2] = 12;
-	sensors[4].assignedLeds[0] = 13;
-	sensors[4].assignedLeds[1] = 14;
-	sensors[4].assignedLeds[2] = 15;
-	
+	for(unsigned int i = 0; i < 6; i++)
+  {
+    sensors[0].assignedLeds[i] = i;
+  }
+	for(unsigned int i = 6; i < 17; i++)
+  {
+    sensors[1].assignedLeds[i-6] = i;
+  } 
+  for(unsigned int i = 17; i < 23; i++)
+  {
+    sensors[2].assignedLeds[i-17] = i;
+  }
+  for(unsigned int i = 23; i < 40; i++)
+  {
+    sensors[3].assignedLeds[i-23] = i;
+  }
+  for(unsigned int i = 40; i < 56; i++)
+  {
+    sensors[4].assignedLeds[i-40] = i;
+  }
 	presence_sensors[0] =  9;                               // setting the number of the presence, parking assistance and exit sensors
 	presence_sensors[1] = 10;
+ 
 	parking_sensors[0] = 5;
 	parking_sensors[1] = 6;
 	parking_sensors[2] = 7;
 	parking_sensors[3] = 8;
+ 
 	exit_sensor = 11;
 	
 	assignedCol[0] = CRGB::Red;                             // assigning a different color to each Vehicle object                                    
 	assignedCol[1] = CRGB::Blue;
-	assignedCol[2] = CRGB::Green;
 	
 	for(uint8_t i = 0 ; i < SENS_NUM; i++)                  // assigning a different ADC pin to each Sensor object(from A0 to A11)
 	{                         
 		Sensor item(i+18);
 		sensors[i] = item;
-    }
+  }
 	
 	for(uint8_t i = 0; i < NUM_LEDS; i++)                   // initializing the LED priority matrix to 'off' (LED turned off)
 	{
@@ -210,6 +217,12 @@ void staticAssignment()                                  // this function hosts 
 
 void setup() 
 {
+  pinMode(4, INPUT);
+  pinMode(6, INPUT);
+  pinMode(8, INPUT);
+  pinMode(9, INPUT);
+  pinMode(10, INPUT);
+  pinMode(12, INPUT);
 	staticAssignment();                                                // calling the static assignment function
 	FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS);   // initializing the LED strip
 	client.setServer(server,PORT);
@@ -220,6 +233,7 @@ void setup()
 	delay(2000);
 	pinMode(BUZZER_PIN, OUTPUT);                                       // initializing the buzzer pin                         
 	Console.println("Hardware ready.");                                // DEBUG print
+  digitalWrite(BUZZER_PIN, LOW);
 }
 
 void loop() 
@@ -229,6 +243,7 @@ void loop()
 		reconnect();
 	}
 	client.loop();                                                         // listening to MQTT messages
+  
 	for(uint8_t i = 0; i < MAX_ROAMING; i++)                               // road sensors polling start
 	{      
 		if(expected_sensors[i]!=-1)                                           
@@ -244,10 +259,11 @@ void loop()
 				{
 					uint8_t led = sensors[expected_sensors[i]].assignedLeds[k];
 					
-					for(uint8_t h = 0; h < MAX_ROAMING; h++) 
+					for(uint8_t h = 0; h < MAX_ROAMING-1; h++) 
 					{
 						leds_prio[led][h] = leds_prio[led][h+1];
 					}
+          leds_prio[led][MAX_ROAMING-1] = CRGB::Black;
 			  
 				}
 				vehicles[i].lastPosUpdate(expected_sensors[i]);                  // updating the last position of the vehicle to the sensor that has just been crossed
@@ -271,14 +287,13 @@ void loop()
 	for(uint8_t i = 0; i < MAX_PRES; i++)                                  // spot presence sensors polling start
 	{           
 		uint8_t j = presence_sensors[i];
+    
 		sensors[j].sense();
-		if(sensors[j].isSwitched())                                          // if the presence sensor changes its state, the system sends the MQTT broker a message
+		if(sensors[j].wasChanged)                                          // if the presence sensor changes its state, the system sends the MQTT broker a message
 		{
-			char tbuf[MAX_MEX_SIZE];
-			char mbuf[MAX_MEX_SIZE];
+			char tbuf[5] = "    ";
       char mex;
-
-			String topic = "storey/spot/" + String(sensor_to_spot(j));         // creating the topic to publish the message on
+			
 			if(sensors[j].getState()) 
 			{
 				mex = '1';
@@ -286,8 +301,10 @@ void loop()
 			{
 				mex = '0';
 			}
-			topic.toCharArray(tbuf,MAX_MEX_SIZE);
-			client.publish(tbuf,mex);                                          // sending the message to the broker
+     String spot = String(sensor_to_spot(j)) + ',' + String(mex);
+			spot.toCharArray(tbuf,5); 
+			 // sending the message to the broker
+    client.publish(presence_topic, tbuf);
 		} 
 	}                                                                      // spot presence sensors polling start                                                                                                                                                                
   
@@ -298,13 +315,14 @@ void loop()
 		{
 			tone(BUZZER_PIN, FREQUENCY, DURATION);
 		}
-	}                                                                      // parking assistance sensors polling end                                                       
-  
+	}                                                                      // parking assistance sensors polling end       
+                                                 
 	sensors[exit_sensor].sense();                                          // exit sensor polling start
 	if(sensors[exit_sensor].isCrossed()) 
 	{
-		client.publish("storey/exit","AmI is awesome");
+		client.publish(exit_topic,"AmI is awesome");
 	}                                                                      // exit sensor polling end
+ 
 
 	for(uint8_t i = 0; i < NUM_LEDS; i++)                                  // assigning each LED the highest priority color in the matrix
 	{
@@ -312,4 +330,5 @@ void loop()
 	}
 
 	FastLED.show();                                                        // updating the LED strip
+ 
 }

@@ -7,6 +7,8 @@ Sensor::Sensor(int pin)
 	_analogValue = 0;
 	_isCrossed = false;
 	_threshold = 300;
+	_lastState = false;
+	wasChanged = true;
 }
 Sensor::Sensor() 
 {
@@ -17,8 +19,7 @@ Sensor::Sensor()
 	_lastState = false;
 }
 void Sensor::sense()
-{
-	
+{	
  	_analogValue = analogRead(_pin);
 	if(_crossCheck(_analogValue))
 	{
@@ -26,23 +27,27 @@ void Sensor::sense()
 		
 		if (_lastState)
 		{
+			wasChanged = false;
 			_isCrossed = false;
 		} else
 		{
+			wasChanged = true;
 			_lastState = _isCrossed;
 		}
 	}
 	else
 	{
 		_isCrossed = false;
+		if(_lastState)
+		{
+			wasChanged = true;
+		}
+		else
+		{
+			wasChanged = false;
+		}
 		_lastState = _isCrossed;
 	}
-	
-	
-}
-void Sensor::stateChange()
-{
-	_lastState = !_lastState;
 }
 bool Sensor::getState()
 {
@@ -50,23 +55,21 @@ bool Sensor::getState()
 }
 bool Sensor::isSwitched()
 {
-	if(((_isCrossed)&&(!_lastState))||((!_isCrossed)&&(_lastState)))
-	{
-		return true;
-	}
-	return false;
+	return _isCrossed == !_lastState;
+	
 }
 bool Sensor::_crossCheck(int value)
 {
-	if (value > _threshold)
-	{
-		return true;
-	}
-	return false;
+	return value > _threshold;
 }
 bool Sensor::isCrossed() 
 {
 	return _isCrossed;
+}
+bool Sensor::rawIsCrossed()
+{
+	int value = analogRead(_pin);
+	return _crossCheck(value);
 }
 int Sensor::getPin()
 {
@@ -74,12 +77,12 @@ int Sensor::getPin()
 }
 int sensor_to_spot(int sensor)
 {
-	if(sensor == 6)
-	{
-		return 0;
-	} else if(sensor == 7)
+	if(sensor == 9)
 	{
 		return 7;
+	} else if(sensor == 10)
+	{
+		return 0;
 	}
 	return -1;
 }
@@ -91,7 +94,6 @@ Vehicle::Vehicle()
 	vec minus_one;
 	_lastPos = -1;
 	_isFree = true;
-	_spot = -1;
 	_sequence.setLen(1);
 	for(unsigned int i = 0; i < SENS_NUM; i++) 
 	{
@@ -137,32 +139,17 @@ bool Vehicle::isFree()
 {
 	return _isFree;
 }
-void Vehicle::_isEnd()
-{
-	if(_sequence.getList().v[_sequence.getLen()-1] == _lastPos)
-	{
-		_isFree == true;
-	}
-}
-void Vehicle::_setOccupied()
-{
-	_isFree = false;
-}
 void Vehicle::assignFromSeq(Sequence seq)
 {
 	_sequence = seq;
 	_isFree = false;
 }
-void Vehicle::updateSpot(int spot) 
-{
-	_spot = spot;
-}
+
 void Vehicle::reset()
 {
 	vec minus_one;
 	_lastPos = -1;
 	_isFree = true;
-	_spot = -1;
 	for(unsigned int i = 0; i < SENS_NUM; i++) 
 	{
 		minus_one.v[i] = -1;
@@ -212,6 +199,7 @@ int Sequence::getLen()
 {
 	return _length;
 }
+
 int getlen(vec array)
 {
 	int i = 0;

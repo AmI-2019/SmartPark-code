@@ -1,7 +1,7 @@
 #ifndef SmartPark_h
 #define SmartPark_h
-#define SENS_NUM 5
-#define MAX_STRIP 5
+#define SENS_NUM 12
+#define MAX_STRIP 17
 typedef struct 
 {
 	int v[SENS_NUM];
@@ -13,12 +13,13 @@ class Sensor
 		Sensor(int pin);
 		Sensor();
 		bool isCrossed();
+		bool rawIsCrossed();
 		void sense();
 		int getPin();
-		void stateChange();
 		bool getState();
 		bool isSwitched();
 		int assignedLeds[MAX_STRIP];
+		bool wasChanged;
 	private:
 		bool _crossCheck(int value);
 		int _pin;
@@ -51,18 +52,14 @@ class Vehicle
 		void lastPosUpdate(int last_position);
 		int getLastPos();
 		int getNextPos();
-		void updateSpot(int spot);
 		bool isFree();
 		void reset();
 		
 	private:
-		void _setOccupied();
 		void _clear();
-		void _isEnd();
 		int _lastPos;
 		bool _isFree;
 		Sequence _sequence;
-		int _spot;
 };
 
 
